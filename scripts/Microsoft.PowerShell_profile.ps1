@@ -1,5 +1,6 @@
 # PS C:> $profile
 # C:\Users\Apple\Documents\WindowsPowerShell\Microsoft.VSCode_profile.ps1
+# PS C:> . $profile  #使profile生效
 
 Set-Alias grep findstr
 Set-Alias vi Notepad
