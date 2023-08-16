@@ -2,8 +2,8 @@ package main
 
 import (
 	"image/color"
+	"io"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 
@@ -38,7 +38,7 @@ func main() {
 		return
 	}
 
-	err := qrcode.WriteColorFile(content, qrcode.Medium, length, color.Black, color.White, "qr.png")
+	err := qrcode.WriteColorFile(content, qrcode.Medium, length, color.White, color.Black, "qr.png")
 	panicIf(err)
 
 }
@@ -56,20 +56,19 @@ func unpack(qrCodePath string) string {
 		err error
 	)
 
+	var r io.Reader
 	if strings.HasPrefix(qrCodePath, "http") {
-		_, err = url.Parse(qrCodePath)
-		panicIf(err)
 		resp, err := http.Get(qrCodePath)
 		panicIf(err)
 		defer resp.Body.Close()
-		qc, err = unQrCode.Decode(resp.Body)
-		panicIf(err)
+		r = resp.Body
 	} else {
 		file, err := os.Open(qrCodePath)
 		panicIf(err)
 		defer file.Close()
-		qc, err = unQrCode.Decode(file)
-		panicIf(err)
+		r = file
 	}
+	qc, err = unQrCode.Decode(r)
+	panicIf(err)
 	return qc.Content
 }
