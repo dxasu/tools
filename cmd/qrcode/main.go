@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"image"
 	"image/color"
 	"io"
 	"net/http"
@@ -9,8 +11,10 @@ import (
 
 	"github.com/atotto/clipboard"
 	"github.com/dxasu/qrcode"
+	uncode "github.com/makiuchi-d/gozxing/qrcode"
+
+	"github.com/makiuchi-d/gozxing"
 	"github.com/spf13/cast"
-	unQrCode "github.com/tuotoo/qrcode"
 )
 
 func main() {
@@ -34,7 +38,7 @@ func main() {
 		}
 	} else if content == "-u" && len(os.Args) >= 3 {
 		file := os.Args[2]
-		println(unpack(file))
+		println(decodeFile(file))
 		return
 	}
 
@@ -45,17 +49,12 @@ func main() {
 
 func panicIf(err error) {
 	if err != nil {
-		println(err)
+		fmt.Printf("%+v", err)
 		os.Exit(0)
 	}
 }
 
-func unpack(qrCodePath string) string {
-	var (
-		qc  *unQrCode.Matrix
-		err error
-	)
-
+func decodeFile(qrCodePath string) string {
 	var r io.Reader
 	if strings.HasPrefix(qrCodePath, "http") {
 		resp, err := http.Get(qrCodePath)
@@ -68,7 +67,18 @@ func unpack(qrCodePath string) string {
 		defer file.Close()
 		r = file
 	}
-	qc, err = unQrCode.Decode(r)
+	content := decodeReader(r)
+	return content
+}
+
+func decodeReader(file io.Reader) string {
+	img, _, err := image.Decode(file)
 	panicIf(err)
-	return qc.Content
+	bmp, err := gozxing.NewBinaryBitmapFromImage(img)
+	panicIf(err)
+	// decode image
+	qrReader := uncode.NewQRCodeReader()
+	result, err := qrReader.Decode(bmp, nil)
+	panicIf(err)
+	return result.String()
 }
