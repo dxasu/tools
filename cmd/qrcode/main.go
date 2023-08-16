@@ -32,7 +32,7 @@ func main() {
 	if content == "-c" || content == "-cs" && len(os.Args) >= 3 {
 		var err error
 		content, err = clipboard.ReadAll()
-		panicIf(err)
+		exitIf(err)
 
 		if content == "-cs" {
 			length = cast.ToInt(os.Args[2])
@@ -44,14 +44,14 @@ func main() {
 	}
 
 	err := qrcode.WriteColorFile(content, qrcode.Medium, length, color.White, color.Black, "qr.png")
-	panicIf(err)
+	exitIf(err)
 
 }
 
-func panicIf(err error) {
+func exitIf(err error) {
 	if err != nil {
-		fmt.Printf("%+v", err)
-		os.Exit(0)
+		fmt.Printf("%+v\n", err)
+		os.Exit(1)
 	}
 }
 
@@ -59,12 +59,12 @@ func decodeFile(qrCodePath string) string {
 	var r io.Reader
 	if strings.HasPrefix(qrCodePath, "http") {
 		resp, err := http.Get(qrCodePath)
-		panicIf(err)
+		exitIf(err)
 		defer resp.Body.Close()
 		r = resp.Body
 	} else {
 		file, err := os.Open(qrCodePath)
-		panicIf(err)
+		exitIf(err)
 		defer file.Close()
 		r = file
 	}
@@ -74,12 +74,12 @@ func decodeFile(qrCodePath string) string {
 
 func decodeReader(file io.Reader) string {
 	img, _, err := image.Decode(file)
-	panicIf(err)
+	exitIf(err)
 	bmp, err := gozxing.NewBinaryBitmapFromImage(img)
-	panicIf(err)
+	exitIf(err)
 	// decode image
 	qrReader := uncode.NewQRCodeReader()
 	result, err := qrReader.Decode(bmp, nil)
-	panicIf(err)
+	exitIf(err)
 	return result.String()
 }
