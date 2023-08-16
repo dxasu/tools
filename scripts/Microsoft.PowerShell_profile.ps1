@@ -29,6 +29,17 @@ function deltag {
     git push --delete origin $fulltagname
 }
 
+function pushall {
+    param (
+        $notes
+    )
+    if(! $notes){
+        $notes="push all"
+    }
+    git commit -am $notes
+    git push
+}
+
 
 # Add Get-AllHistory function for powershell
 function GetAll
