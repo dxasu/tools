@@ -22,9 +22,10 @@ func main() {
 	if len(os.Args) >= 2 {
 		content = os.Args[1]
 	} else {
-		panic(`args empty, input http://xxxxx
+		println(`args empty, input http://xxxxx
 		 -c or "-cs 256" with copy data from clipboard
 		 -u xxx.png | http://xxxx.png with unpack from qrcode`)
+		return
 	}
 
 	length := 256
