@@ -36,6 +36,7 @@ function pushall {
     if(! $notes){
         $notes="push all"
     }
+    git add .
     git commit -am $notes
     git push
 }
