@@ -1,6 +1,8 @@
 # tools
 collection effective tools
 
+# go install 失败，代理设置
+go env -w GOPROXY=https://goproxy.cn
 
 ## qrcode
 go install -ldflags="-s" github.com/dxasu/tools/cmd/qrcode@latest

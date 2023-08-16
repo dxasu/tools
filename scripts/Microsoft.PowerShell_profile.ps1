@@ -1,5 +1,6 @@
 # PS C:> $profile
 # C:\Users\Apple\Documents\WindowsPowerShell\Microsoft.VSCode_profile.ps1
+# PS C:> . $profile  #使profile生效
 
 Set-Alias grep findstr
 Set-Alias vi Notepad
@@ -26,6 +27,18 @@ function deltag {
     )
     git tag -d $fulltagname
     git push --delete origin $fulltagname
+}
+
+function pushall {
+    param (
+        $notes
+    )
+    if(! $notes){
+        $notes="push all"
+    }
+    git add .
+    git commit -am $notes
+    git push
 }
 
 
