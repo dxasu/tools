@@ -23,8 +23,8 @@ func main() {
 		content = os.Args[1]
 	} else {
 		println(`args empty, input http://xxxxx
-		 -c or "-cs 256" with copy data from clipboard
-		 -u xxx.png | http://xxxx.png with unpack from qrcode`)
+-c or "-cs 256" with copy data from clipboard
+-u xxx.png | http://xxxx.png with unpack from qrcode`)
 		return
 	}
 
