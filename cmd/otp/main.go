@@ -9,7 +9,7 @@ import (
 	"bytes"
 	"io/ioutil"
 
-	"bay.core/lancet/errdo"
+	"bay.core/lancet/rain"
 	_ "github.com/dxasu/tools/lancet/version"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
@@ -54,7 +54,7 @@ func display(key *otp.Key, data []byte) {
 // 	reader := bufio.NewReader(os.Stdin)
 // 	fmt.Print("Enter Passcode: ")
 // 	text, err := reader.ReadString('\n')
-// 	errdo.ExitIf(err)
+// 	rain.ExitIf(err)
 // 	return text
 // }
 
@@ -68,7 +68,7 @@ func display(key *otp.Key, data []byte) {
 // 		Digits:    otp.DigitsSix,
 // 		Algorithm: otp.AlgorithmSHA512,
 // 	})
-// 	errdo.ExitIf(err)
+// 	rain.ExitIf(err)
 // 	return passcode
 // }
 
@@ -77,11 +77,11 @@ func generate(issuer, account string, needPng bool) {
 		Issuer:      issuer,
 		AccountName: account,
 	})
-	errdo.ExitIf(err)
+	rain.ExitIf(err)
 	if needPng {
 		var buf bytes.Buffer
 		img, err := key.Image(200, 200)
-		errdo.ExitIf(err)
+		rain.ExitIf(err)
 		png.Encode(&buf, img)
 		display(key, buf.Bytes())
 	}

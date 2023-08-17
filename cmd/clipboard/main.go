@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"bay.core/lancet/errdo"
+	"bay.core/lancet/rain"
 	"github.com/atotto/clipboard"
 	_ "github.com/dxasu/tools/lancet/version"
 )
@@ -23,13 +23,13 @@ func main() {
 	}
 
 	out, err := ioutil.ReadAll(os.Stdin)
-	errdo.ExitIf(err)
+	rain.ExitIf(err)
 	err = clipboard.WriteAll(string(out))
-	errdo.ExitIf(err)
+	rain.ExitIf(err)
 	if timeout != nil && *timeout > 0 {
 		<-time.After(*timeout)
 		text, err := clipboard.ReadAll()
-		errdo.ExitIf(err)
+		rain.ExitIf(err)
 		if text == string(out) {
 			clipboard.WriteAll("")
 		}
@@ -38,6 +38,6 @@ func main() {
 
 func pasteTo() {
 	content, err := clipboard.ReadAll()
-	errdo.ExitIf(err)
+	rain.ExitIf(err)
 	fmt.Print(content)
 }
