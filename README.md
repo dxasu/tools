@@ -5,6 +5,7 @@ collection effective tools
 go env -w GOPROXY=https://goproxy.cn
 
 # make
+cd cmd/qrcode
 make -f ../../scripts/Makefile
 
 ## qrcode
