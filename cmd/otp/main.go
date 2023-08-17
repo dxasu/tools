@@ -9,7 +9,7 @@ import (
 	_ "github.com/dxasu/tools/lancet/version"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
-
+	"bay.core/lancet/errdo"
 	"bytes"
 	"io/ioutil"
 )
@@ -53,16 +53,10 @@ func display(key *otp.Key, data []byte) {
 // 	reader := bufio.NewReader(os.Stdin)
 // 	fmt.Print("Enter Passcode: ")
 // 	text, err := reader.ReadString('\n')
-// 	exitIf(err)
+// 	errdo.ExitIf(err)
 // 	return text
 // }
 
-func exitIf(err error) {
-	if err != nil {
-		fmt.Printf("%+v\n", err)
-		os.Exit(1)
-	}
-}
 
 // Demo function, not used in main
 // Generates Passcode using a UTF-8 (not base32) secret and custom parameters
@@ -74,7 +68,7 @@ func exitIf(err error) {
 // 		Digits:    otp.DigitsSix,
 // 		Algorithm: otp.AlgorithmSHA512,
 // 	})
-// 	exitIf(err)
+// 	errdo.ExitIf(err)
 // 	return passcode
 // }
 
@@ -83,13 +77,13 @@ func generate(issuer, account string, needPng bool) {
 		Issuer:      issuer,
 		AccountName: account,
 	})
-	exitIf(err)
+	errdo.ExitIf(err)
 	if needPng {
 		var buf bytes.Buffer
 		img, err := key.Image(200, 200)
-		exitIf(err)
+		errdo.ExitIf(err)
 		png.Encode(&buf, img)
 		display(key, buf.Bytes())
 	}
 	println(key.String())
-}
+}"bay.core/lancet/errdo"

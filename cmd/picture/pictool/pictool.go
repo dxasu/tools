@@ -20,7 +20,7 @@ func encode(inputName string, file *os.File, rgba *image.RGBA) {
 	} else if strings.HasSuffix(inputName, "gif") {
 		gif.Encode(file, rgba, nil)
 	} else {
-		fmt.Errorf("不支持的图片格式")
+		fmt.Println("不支持的图片格式")
 	}
 }
 

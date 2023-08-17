@@ -2,6 +2,9 @@ module github.com/dxasu/tools/cmd/qrcode
 
 go 1.18
 
+
+replace bay.core/lancet/errdo => ../../lancet/errdo
+
 require (
 	github.com/atotto/clipboard v0.1.4
 	github.com/dxasu/qrcode v1.0.0

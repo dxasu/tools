@@ -2,8 +2,11 @@ module github.com/dxasu/tools/cmd/otp
 
 go 1.18
 
+replace bay.core/lancet/errdo => ../../lancet/errdo
+
 require (
-	github.com/dxasu/tools/lancet/version v1.0.0
+	bay.core/lancet/errdo v0.0.0-00010101000000-000000000000
+	github.com/dxasu/tools/lancet/version v0.0.0-20230817102921-3ddac65cae69
 	github.com/pquerna/otp v1.4.0
 )
 

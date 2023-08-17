@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/dxasu/tools/cmd/picture/pictool"
-	"github.com/dxasu/tools/lancet/errors"
 	_ "github.com/dxasu/tools/lancet/version"
 )
 
@@ -45,5 +44,5 @@ func main() {
 	}
 
 	err := pictool.HandlePic(p)
-	errors.ExitIf(err)
+	errdo.errdo.ExitIf(err)
 }

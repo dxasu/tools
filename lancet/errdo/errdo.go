@@ -1,11 +1,11 @@
-package errors
+package errdo
 
 import (
 	"fmt"
 	"os"
 )
 
-func ExitIf(err error) {
+func errdo.ExitIf(err error) {
 	if err != nil {
 		fmt.Printf("%+v\n", err)
 		os.Exit(1)
