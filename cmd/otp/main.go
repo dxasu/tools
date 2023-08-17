@@ -6,12 +6,13 @@ import (
 	"os"
 	"time"
 
+	"bytes"
+	"io/ioutil"
+
+	"bay.core/lancet/errdo"
 	_ "github.com/dxasu/tools/lancet/version"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
-	"bay.core/lancet/errdo"
-	"bytes"
-	"io/ioutil"
 )
 
 // otpauth://totp/luck/luck@sz.com?secret=qlt6vmy6svfx4bt4rpmisaiyol6hihca&issuer=luck
@@ -57,7 +58,6 @@ func display(key *otp.Key, data []byte) {
 // 	return text
 // }
 
-
 // Demo function, not used in main
 // Generates Passcode using a UTF-8 (not base32) secret and custom parameters
 // func GeneratePassCode(utf8string string) string {
@@ -86,4 +86,4 @@ func generate(issuer, account string, needPng bool) {
 		display(key, buf.Bytes())
 	}
 	println(key.String())
-}"bay.core/lancet/errdo"
+}

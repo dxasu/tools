@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"bay.core/lancet/errdo"
 
 	"github.com/dxasu/tools/cmd/picture/pictool"
 	_ "github.com/dxasu/tools/lancet/version"
@@ -44,5 +45,5 @@ func main() {
 	}
 
 	err := pictool.HandlePic(p)
-	errdo.errdo.ExitIf(err)
+	errdo.ExitIf(err)
 }

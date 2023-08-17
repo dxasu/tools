@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"io"
@@ -9,12 +8,12 @@ import (
 	"os"
 	"strings"
 
+	"bay.core/lancet/errdo"
 	"github.com/atotto/clipboard"
 	"github.com/dxasu/qrcode"
 	_ "github.com/dxasu/tools/lancet/version"
-	uncode "github.com/makiuchi-d/gozxing/qrcode"
-
 	"github.com/makiuchi-d/gozxing"
+	uncode "github.com/makiuchi-d/gozxing/qrcode"
 	"github.com/spf13/cast"
 )
 
@@ -47,13 +46,6 @@ func main() {
 	err := qrcode.WriteColorFile(content, qrcode.Medium, length, color.White, color.Black, "qr.png")
 	errdo.ExitIf(err)
 
-}
-
-func errdo.ExitIf(err error) {
-	if err != nil {
-		fmt.Printf("%+v\n", err)
-		os.Exit(1)
-	}
 }
 
 func decodeFile(qrCodePath string) string {
