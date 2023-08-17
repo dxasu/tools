@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/dxasu/tools/lancet/version"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
 

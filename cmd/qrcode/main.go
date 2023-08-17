@@ -11,6 +11,7 @@ import (
 
 	"github.com/atotto/clipboard"
 	"github.com/dxasu/qrcode"
+	_ "github.com/dxasu/tools/lancet/version"
 	uncode "github.com/makiuchi-d/gozxing/qrcode"
 
 	"github.com/makiuchi-d/gozxing"

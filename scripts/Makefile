@@ -19,7 +19,7 @@ BUILT = -X '$(VERSION_PATH).BuildTime=$$(date "+%Y-%m-%d %H:%M:%S")'
 STATUS = -X '$(VERSION_PATH).GitStatus=$$(git status)'
 LDFLAG = "-s -w $(VERSION) $(GO_VERSION) $(GIT_COMMIT) $(BUILT) $(STATUS)"
 
-PROJECT = $(shell pwd|grep -io '[^/]*$')
+PROJECT = $(shell pwd|grep -io "[^/]*$$")
 # 二进制文件生成目录
 BIN_DIR = .
 BUILD = go build -ldflags $(LDFLAG) -o $(BIN_DIR)/$(PROJECT) .
