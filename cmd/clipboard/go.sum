@@ -1,2 +1,4 @@
 github.com/atotto/clipboard v0.1.4 h1:EH0zSVneZPSuFR11BlR9YppQTVDbh5+16AmcJi4g1z4=
 github.com/atotto/clipboard v0.1.4/go.mod h1:ZY9tmq7sm5xIbd9bOK4onWV4S6X0u6GY7Vn0Yu86PYI=
+github.com/dxasu/tools/lancet/version v0.0.0-20230817085701-358c17504e09 h1:WhLV3THXKfRBWI7HHQcLo7wZ1DkuWvJjPNtxbc5BBDA=
+github.com/dxasu/tools/lancet/version v0.0.0-20230817085701-358c17504e09/go.mod h1:lttLrOYSMyCee+k4q2xjjrhwyK3J/62snSMsn18o+zw=

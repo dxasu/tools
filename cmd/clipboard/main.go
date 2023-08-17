@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/atotto/clipboard"
+	_ "github.com/dxasu/tools/lancet/version"
 )
 
 func main() {
