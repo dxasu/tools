@@ -3,7 +3,7 @@ module github.com/dxasu/tools/cmd/otp
 go 1.18
 
 require (
-	github.com/dxasu/tools/lancet/version v0.0.0-20230817085701-358c17504e09
+	github.com/dxasu/tools/lancet/version v1.0.0
 	github.com/pquerna/otp v1.4.0
 )
 
