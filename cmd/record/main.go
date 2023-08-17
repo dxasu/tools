@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"os/exec"
 	"path/filepath"
@@ -26,7 +27,10 @@ func main() {
 		exec.Command("explorer", path).Run()
 		return
 	}
-	long := cast.ToDuration(os.Args[2]) / 1e9
+	var long time.Duration = 3600
+	if len(os.Args) > 2 {
+		long = cast.ToDuration(os.Args[2]) / 1e9
+	}
 	corekey.PcListen(fmt.Sprintf("core_dump_v%d_linux.tmp", long), 0)
 	println("Wait Ctrl + C")
 	rain.WaitCtrlC()
