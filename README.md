@@ -18,5 +18,14 @@ go install -ldflags="-s" github.com/dxasu/tools/cmd/qrcode@latest
 ## clipboard
 go install -ldflags="-s" github.com/dxasu/tools/cmd/clipboard@latest
 
+## json
+go install -ldflags="-s" github.com/dxasu/tools/cmd/json@latest
+
 ## otp
 go install -ldflags="-s" github.com/dxasu/tools/cmd/otp@latest
+
+## rsa
+#私钥
+openssl genrsa 2048 | openssl pkcs8 -topk8 -nocrypt -out private.key.pem
+#公钥
+openssl rsa -in private.key.pem -pubout > public.key.pem

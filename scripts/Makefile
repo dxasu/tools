@@ -22,6 +22,7 @@ LDFLAG = "-s -w $(VERSION) $(GO_VERSION) $(GIT_COMMIT) $(BUILT) $(STATUS)"
 PROJECT = $(shell pwd|grep -io "[^/]*$$")
 # 二进制文件生成目录
 BIN_DIR = .
+$(warning   $(LDFLAG))
 BUILD = go build -ldflags $(LDFLAG) -o $(BIN_DIR)/$(PROJECT) .
 
 .PHONY: build

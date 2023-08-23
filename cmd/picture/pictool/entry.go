@@ -25,21 +25,23 @@ type picFunc = func(p PicStruct, m image.Image) error
 
 var commandList map[string]picFunc
 
+func writeImg(target, source string, rgba *image.RGBA) {
+	f, _ := os.Create(target)
+	defer f.Close()
+	encode(source, f, rgba)
+}
+
 func init() {
 	commandList = map[string]picFunc{}
 	commandList["ysfz"] = func(p PicStruct, m image.Image) error {
 		newRgba := fzImage(m)
-		f, _ := os.Create(p.Target)
-		defer f.Close()
-		encode(p.Source, f, newRgba)
+		writeImg(p.Target, p.Source, newRgba)
 		return nil
 	}
 
 	commandList["hd"] = func(p PicStruct, m image.Image) error {
-		newGray := hdImage(m)
-		f, _ := os.Create(p.Target)
-		defer f.Close()
-		encode(p.Source, f, newGray)
+		newRgba := hdImage(m)
+		writeImg(p.Target, p.Source, newRgba)
 		return nil
 	}
 
@@ -49,9 +51,7 @@ func init() {
 			rectWidth, _ = strconv.Atoi(p.Option.Param)
 		}
 		newRgba := rectImage(m, rectWidth)
-		f, _ := os.Create(p.Target)
-		defer f.Close()
-		encode(p.Source, f, newRgba)
+		writeImg(p.Target, p.Source, newRgba)
 		return nil
 	}
 
