@@ -18,8 +18,8 @@ go install -ldflags="-s" github.com/dxasu/tools/cmd/qrcode@latest
 ## clipboard
 go install -ldflags="-s" github.com/dxasu/tools/cmd/clipboard@latest
 
-## json
-go install -ldflags="-s" github.com/dxasu/tools/cmd/json@latest
+## jsonhand
+go install -ldflags="-s" github.com/dxasu/tools/cmd/jsonhand@latest
 
 ## otp
 go install -ldflags="-s" github.com/dxasu/tools/cmd/otp@latest

@@ -17,7 +17,7 @@ import (
 
 // otpauth://totp/luck/luck@sz.com?secret=qlt6vmy6svfx4bt4rpmisaiyol6hihca&issuer=luck
 func main() {
-	if len(os.Args) < 2 {
+	if len(os.Args) < 2 || rain.NeedHelp() {
 		println(`input:
 otp "otpauth://totp/xxxxxx"
 otp [-p] luck luck@sz.com`)

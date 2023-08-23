@@ -27,7 +27,7 @@ Cover old if OUTPUT is empty.
 //该工具支持将图片色彩反转，图片灰化，图片转为字符画。
 func main() {
 	args := os.Args //获取用户输入的所有参数
-	if len(args) > 6 || len(args) < 3 {
+	if len(args) > 6 || len(args) < 3 || rain.NeedHelp() {
 		fmt.Println(usage)
 		return
 	}

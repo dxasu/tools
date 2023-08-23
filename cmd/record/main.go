@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 || os.Args[1] != "-o" && os.Args[1] != "-l" {
+	if len(os.Args) < 2 || os.Args[1] != "-o" && os.Args[1] != "-l" || rain.NeedHelp() {
 		println(`args empty
 -o for open data of record
 -l 1h record start`)

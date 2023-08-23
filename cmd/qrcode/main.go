@@ -18,16 +18,13 @@ import (
 )
 
 func main() {
-	var content string
-	if len(os.Args) >= 2 {
-		content = os.Args[1]
-	} else {
+	if len(os.Args) < 2 || rain.NeedHelp() {
 		println(`args empty, input http://xxxxx
 -c or "-cs 256" with copy data from clipboard
 -u xxx.png | http://xxxx.png with unpack from qrcode`)
 		return
 	}
-
+	content := os.Args[1]
 	length := 256
 	if content == "-c" || content == "-cs" && len(os.Args) >= 3 {
 		var err error
