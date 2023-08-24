@@ -20,18 +20,16 @@ import (
 
 func main() {
 	if rain.NeedHelp() {
-		println(`args empty, example: jsonhand -[ju | fqz | gGcn] [string | yaml]
--------1--------
+		println(`args empty, example: jsonhand -[ju | fz | qgGcn] [xxx | yaml]
 -j to json by yaml, yml, toml, ini, env. Data source must from clipboard
 -u unquote string to json
--------2--------
--q quote json to string
 -f format json
--z compact json
--------3--------
--g to go struct and sub (-G with single struct)
+-z zip json
+-q quote json to string
+-g spawn go struct and sub (-G with single struct)
 -c copy to clipboard
 -n print nothing but error
+-w as -uf default without params. 
 `)
 		return
 	}
@@ -43,7 +41,7 @@ func main() {
 			rain.ExitIf(errors.New("invalid param"))
 		}
 	} else {
-		cmd = "-f"
+		cmd = "-d"
 	}
 
 	var (
@@ -80,6 +78,8 @@ func main() {
 			j.ToStruct(false)
 		case 'c':
 			j.ToClipboard()
+		case 'd':
+			j.Default()
 		case 'j':
 			if len(os.Args) < 3 {
 				rain.ExitIf(errors.New("-j need param like yaml, yml, toml, ini, env"))
@@ -92,7 +92,7 @@ func main() {
 		}
 	}
 	if show {
-		print(string(j.Data))
+		println(string(j.Data))
 	}
 }
 
@@ -142,4 +142,19 @@ func (j *jsonFly) ParseToJson(t string) {
 	var err error
 	j.Data, err = json.Marshal(viper.AllSettings())
 	rain.ExitIf(err)
+}
+
+func (j *jsonFly) Default() {
+	data, err1 := strconv.Unquote(string(j.Data))
+	if err1 == nil {
+		j.Data = []byte(data)
+	}
+	dst := &bytes.Buffer{}
+	err2 := json.Indent(dst, j.Data, "", strings.Repeat(" ", 4))
+	if err2 == nil {
+		j.Data = dst.Bytes()
+	}
+	if err1 != nil && err2 != nil {
+		j.Data = []byte(fmt.Errorf("parse with err1:%w \nerr2:%w", err1, err2).Error())
+	}
 }
