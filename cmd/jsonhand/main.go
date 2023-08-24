@@ -29,7 +29,7 @@ func main() {
 -g spawn go struct and sub (-G with single struct)
 -c copy to clipboard
 -n print nothing but error
--w as -uf default without params. 
+-d as -uf default without params. 
 `)
 		return
 	}
