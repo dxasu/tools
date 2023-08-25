@@ -1,7 +1,6 @@
 package rain
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -9,7 +8,7 @@ import (
 
 func ExitIf(err error) {
 	if err != nil {
-		fmt.Printf("%+v\n", err)
+		println(err.Error())
 		os.Exit(1)
 	}
 }
