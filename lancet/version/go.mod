@@ -1,3 +1,3 @@
 module github.com/dxasu/tools/lancet/version
 
-go 1.18
+go 1.21

@@ -1,6 +1,6 @@
 module github.com/dxasu/tools/cmd/record
 
-go 1.18
+go 1.21
 
 replace bay.core/lancet/rain => ../../lancet/rain
 

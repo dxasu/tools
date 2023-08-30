@@ -43,7 +43,7 @@ func main() {
 	} else {
 		cmd = "-d"
 	}
-
+	
 	var (
 		data string
 		err  error

@@ -23,7 +23,7 @@ PROJECT = $(shell pwd|grep -io "[^/]*$$")
 # 二进制文件生成目录
 BIN_DIR = ../../bin
 $(warning   $(LDFLAG))
-BUILD = go build -ldflags $(LDFLAG) -o $(BIN_DIR)/$(PROJECT) .
+BUILD = go build -ldflags $(LDFLAG) -o $(BIN_DIR)/$(PROJECT)
 
 .PHONY: build
 build: ## 编译为当前系统的二进制文件
