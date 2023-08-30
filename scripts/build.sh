@@ -1,5 +1,4 @@
 #!/bin/bash
-SUFFIX=.exe
 OS=windows
 if [ $1 ]
 then
