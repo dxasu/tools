@@ -390,7 +390,7 @@ func typeForValue(value interface{}, structName string, tags []string, subStruct
 // All numbers will initially be read as float64
 // If the number appears to be an integer value, use int instead
 func disambiguateFloatInt(value interface{}) string {
-	const epsilon = .0001
+	const epsilon = .000001
 	vfloat := value.(float64)
 	if !ForceFloats && math.Abs(vfloat-math.Floor(vfloat+epsilon)) < epsilon {
 		var tmp int64
