@@ -20,14 +20,14 @@ import (
 
 func main() {
 	if rain.NeedHelp() {
-		println(`args empty, example: jsonhand -[juL | fFz | qgGvcn] [xxx | yaml]
+		println(`args empty, example: jsonhand -[juL | fFz | qsSvcn] [xxx | yaml]
 -j to json by yaml, yml, toml, ini, env. Data source must from clipboard
 -u unquote string to json
 -L auto name with _sub for sub struct
 -f format json (-F strong)
 -z zip json
 -q quote json to string
--g spawn go struct and sub (-G with single struct)
+-s spawn go struct and sub (-S with single struct)
 -v json to struct with value
 -c copy to clipboard
 -n print nothing but error
@@ -79,9 +79,9 @@ func main() {
 			j.Quote()
 		case 'u':
 			j.UnQuote()
-		case 'g':
+		case 's':
 			j.ToStruct(true)
-		case 'G':
+		case 'S':
 			j.ToStruct(false)
 		case 'v':
 			j.ToStructWithValue()
@@ -185,7 +185,7 @@ func (j *jsonFly) ToStruct(subStruct bool) {
 
 func (j *jsonFly) ToStructWithValue() {
 	convertFloats := true
-	data, err := j2struct.ToStructWithValue(bytes.NewBuffer(j.Data), "", nil, convertFloats)
+	data, err := j2struct.ToStructWithValue(bytes.NewBuffer(j.Data), "Core", nil, convertFloats)
 	rain.ExitIf(err)
 	j.Data = data
 }
