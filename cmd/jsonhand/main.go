@@ -20,13 +20,15 @@ import (
 
 func main() {
 	if rain.NeedHelp() {
-		println(`args empty, example: jsonhand -[ju | fz | qgGcn] [xxx | yaml]
+		println(`args empty, example: jsonhand -[juL | fFz | qgGvcn] [xxx | yaml]
 -j to json by yaml, yml, toml, ini, env. Data source must from clipboard
 -u unquote string to json
--f format json
+-L auto name with _sub for sub struct
+-f format json (-F strong)
 -z zip json
 -q quote json to string
 -g spawn go struct and sub (-G with single struct)
+-v json to struct with value
 -c copy to clipboard
 -n print nothing but error
 -d as -uf default without params. 
@@ -43,7 +45,7 @@ func main() {
 	} else {
 		cmd = "-d"
 	}
-	
+
 	var (
 		data string
 		err  error
@@ -60,12 +62,17 @@ func main() {
 	}
 
 	j := &jsonFly{[]byte(data)}
+	j2struct.NameAsSub = true
 	show := true
 	for _, v := range cmd {
 		switch v {
 		case '-':
 		case 'f':
 			j.Format()
+		case 'F':
+			j.FormatStrong()
+		case 'L':
+			j2struct.NameAsSub = false
 		case 'z':
 			j.Zip()
 		case 'q':
@@ -76,6 +83,8 @@ func main() {
 			j.ToStruct(true)
 		case 'G':
 			j.ToStruct(false)
+		case 'v':
+			j.ToStructWithValue()
 		case 'c':
 			j.ToClipboard()
 		case 'd':
@@ -124,9 +133,59 @@ func (j *jsonFly) Format() {
 	j.Data = dst.Bytes()
 }
 
+func extend(iresult any) any {
+	switch iresult := iresult.(type) {
+	case map[any]any:
+		ret := make(map[string]any, len(iresult))
+		for k, v := range iresult {
+			ret[fmt.Sprint(k)] = extend(v)
+		}
+		return ret
+	case map[string]any:
+		ret := make(map[string]any, len(iresult))
+		for k, v := range iresult {
+			ret[k] = extend(v)
+		}
+		return ret
+	case []any:
+		var ret []any
+		for _, v := range iresult {
+			ret = append(ret, extend(v))
+		}
+		return ret
+	case string:
+		var obj any
+		err := json.Unmarshal([]byte(iresult), &obj)
+		if err == nil {
+			return extend(obj)
+		}
+	default:
+	}
+	return iresult
+}
+
+func (j *jsonFly) FormatStrong() {
+	viper.SetConfigType("json")
+	viper.ReadConfig(bytes.NewBuffer(j.Data))
+	for k, v := range viper.AllSettings() {
+		viper.Set(k, extend(v))
+	}
+	var err error
+	j.Data, err = json.Marshal(viper.AllSettings())
+	rain.ExitIf(err)
+	j.Format()
+}
+
 func (j *jsonFly) ToStruct(subStruct bool) {
 	convertFloats := true
 	data, err := j2struct.Generate(bytes.NewBuffer(j.Data), "Core", []string{"json"}, subStruct, convertFloats)
+	rain.ExitIf(err)
+	j.Data = data
+}
+
+func (j *jsonFly) ToStructWithValue() {
+	convertFloats := true
+	data, err := j2struct.ToStructWithValue(bytes.NewBuffer(j.Data), "", nil, convertFloats)
 	rain.ExitIf(err)
 	j.Data = data
 }
