@@ -20,10 +20,10 @@ import (
 
 func main() {
 	if rain.NeedHelp() {
-		println(`args empty, example: jsonhand -[ju | fz | qgGcn] [xxx | yaml]
+		println(`args empty, example: jsonhand -[ju | fFz | qgGcn] [xxx | yaml]
 -j to json by yaml, yml, toml, ini, env. Data source must from clipboard
 -u unquote string to json
--f format json
+-f format json (-F strong)
 -z zip json
 -q quote json to string
 -g spawn go struct and sub (-G with single struct)
@@ -43,7 +43,7 @@ func main() {
 	} else {
 		cmd = "-d"
 	}
-	
+
 	var (
 		data string
 		err  error
@@ -66,6 +66,8 @@ func main() {
 		case '-':
 		case 'f':
 			j.Format()
+		case 'F':
+			j.FormatStrong()
 		case 'z':
 			j.Zip()
 		case 'q':
@@ -122,6 +124,49 @@ func (j *jsonFly) Format() {
 	err := json.Indent(dst, j.Data, "", strings.Repeat(" ", 4))
 	rain.ExitIf(err)
 	j.Data = dst.Bytes()
+}
+
+func extend(iresult any) any {
+	switch iresult := iresult.(type) {
+	case map[any]any:
+		ret := make(map[string]any, len(iresult))
+		for k, v := range iresult {
+			ret[fmt.Sprint(k)] = extend(v)
+		}
+		return ret
+	case map[string]any:
+		ret := make(map[string]any, len(iresult))
+		for k, v := range iresult {
+			ret[k] = extend(v)
+		}
+		return ret
+	case []any:
+		var ret []any
+		for _, v := range iresult {
+			ret = append(ret, extend(v))
+		}
+		return ret
+	case string:
+		var obj any
+		err := json.Unmarshal([]byte(iresult), &obj)
+		if err == nil {
+			return extend(obj)
+		}
+	default:
+	}
+	return iresult
+}
+
+func (j *jsonFly) FormatStrong() {
+	viper.SetConfigType("json")
+	viper.ReadConfig(bytes.NewBuffer(j.Data))
+	for k, v := range viper.AllSettings() {
+		viper.Set(k, extend(v))
+	}
+	var err error
+	j.Data, err = json.Marshal(viper.AllSettings())
+	rain.ExitIf(err)
+	j.Format()
 }
 
 func (j *jsonFly) ToStruct(subStruct bool) {
