@@ -178,7 +178,7 @@ func generateTypes(obj map[string]interface{}, structName string, tags []string,
 							subName = val
 						} else {
 							if NameAsSub {
-								subName = fmt.Sprintf("%v%v", structName, len(subStructMap)+1)
+								subName = structName
 							} else {
 								subName = fmt.Sprintf("%v_sub%v", structName, len(subStructMap)+1)
 							}
@@ -199,7 +199,7 @@ func generateTypes(obj map[string]interface{}, structName string, tags []string,
 					subName = val
 				} else {
 					if NameAsSub {
-						subName = fmt.Sprintf("%v%v", structName, len(subStructMap)+1)
+						subName = structName
 					} else {
 						subName = fmt.Sprintf("%v_sub%v", structName, len(subStructMap)+1)
 					}
@@ -217,7 +217,7 @@ func generateTypes(obj map[string]interface{}, structName string, tags []string,
 					subName = val
 				} else {
 					if NameAsSub {
-						subName = fmt.Sprintf("%v%v", structName, len(subStructMap)+1)
+						subName = structName
 					} else {
 						subName = fmt.Sprintf("%v_sub%v", structName, len(subStructMap)+1)
 					}
