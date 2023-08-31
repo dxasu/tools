@@ -20,13 +20,15 @@ import (
 
 func main() {
 	if rain.NeedHelp() {
-		println(`args empty, example: jsonhand -[ju | fFz | qgGcn] [xxx | yaml]
+		println(`args empty, example: jsonhand -[juL | fFz | qgGvcn] [xxx | yaml]
 -j to json by yaml, yml, toml, ini, env. Data source must from clipboard
 -u unquote string to json
+-L auto name with _sub for sub struct
 -f format json (-F strong)
 -z zip json
 -q quote json to string
 -g spawn go struct and sub (-G with single struct)
+-v json to struct with value
 -c copy to clipboard
 -n print nothing but error
 -d as -uf default without params. 
@@ -60,6 +62,7 @@ func main() {
 	}
 
 	j := &jsonFly{[]byte(data)}
+	j2struct.NameAsSub = true
 	show := true
 	for _, v := range cmd {
 		switch v {
@@ -68,6 +71,8 @@ func main() {
 			j.Format()
 		case 'F':
 			j.FormatStrong()
+		case 'L':
+			j2struct.NameAsSub = false
 		case 'z':
 			j.Zip()
 		case 'q':
@@ -78,6 +83,8 @@ func main() {
 			j.ToStruct(true)
 		case 'G':
 			j.ToStruct(false)
+		case 'v':
+			j.ToStructWithValue()
 		case 'c':
 			j.ToClipboard()
 		case 'd':
@@ -172,6 +179,13 @@ func (j *jsonFly) FormatStrong() {
 func (j *jsonFly) ToStruct(subStruct bool) {
 	convertFloats := true
 	data, err := j2struct.Generate(bytes.NewBuffer(j.Data), "Core", []string{"json"}, subStruct, convertFloats)
+	rain.ExitIf(err)
+	j.Data = data
+}
+
+func (j *jsonFly) ToStructWithValue() {
+	convertFloats := true
+	data, err := j2struct.ToStructWithValue(bytes.NewBuffer(j.Data), "", nil, convertFloats)
 	rain.ExitIf(err)
 	j.Data = data
 }

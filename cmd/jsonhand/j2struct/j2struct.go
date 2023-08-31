@@ -13,6 +13,7 @@ import (
 	"unicode"
 )
 
+var NameAsSub bool
 var ForceFloats bool
 
 // commonInitialisms is a set of common initialisms.
@@ -151,6 +152,9 @@ func generateTypes(obj map[string]interface{}, structName string, tags []string,
 
 	for _, key := range keys {
 		value := obj[key]
+		if NameAsSub {
+			structName = FmtFieldName(key)
+		}
 		valueType := typeForValue(value, structName, tags, subStructMap, convertFloats)
 
 		//value = mergeElements(value)
@@ -173,7 +177,11 @@ func generateTypes(obj map[string]interface{}, structName string, tags []string,
 						if val, ok := subStructMap[sub]; ok {
 							subName = val
 						} else {
-							subName = fmt.Sprintf("%v_sub%v", structName, len(subStructMap)+1)
+							if NameAsSub {
+								subName = fmt.Sprintf("%v%v", structName, len(subStructMap)+1)
+							} else {
+								subName = fmt.Sprintf("%v_sub%v", structName, len(subStructMap)+1)
+							}
 
 							subStructMap[sub] = subName
 						}
@@ -190,7 +198,11 @@ func generateTypes(obj map[string]interface{}, structName string, tags []string,
 				if val, ok := subStructMap[sub]; ok {
 					subName = val
 				} else {
-					subName = fmt.Sprintf("%v_sub%v", structName, len(subStructMap)+1)
+					if NameAsSub {
+						subName = fmt.Sprintf("%v%v", structName, len(subStructMap)+1)
+					} else {
+						subName = fmt.Sprintf("%v_sub%v", structName, len(subStructMap)+1)
+					}
 
 					subStructMap[sub] = subName
 				}
@@ -204,7 +216,11 @@ func generateTypes(obj map[string]interface{}, structName string, tags []string,
 				if val, ok := subStructMap[sub]; ok {
 					subName = val
 				} else {
-					subName = fmt.Sprintf("%v_sub%v", structName, len(subStructMap)+1)
+					if NameAsSub {
+						subName = fmt.Sprintf("%v%v", structName, len(subStructMap)+1)
+					} else {
+						subName = fmt.Sprintf("%v_sub%v", structName, len(subStructMap)+1)
+					}
 
 					subStructMap[sub] = subName
 				}
