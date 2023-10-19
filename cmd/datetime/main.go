@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -17,16 +18,16 @@ import (
 func main() {
 	if rain.NeedHelp() {
 		println(`Usage:
-	datetime -[fcCnduU]
+	datetime -[cCnduUf]
 Flags:
-	-f formatStr need, default use -c
+	-f formatStr need, 2006-01-02 15:04:05
+	-u parse from unixtime
+	-U parse to unixtime
+	-d now time
 	-c copy from clipboard
 	-C copy to clipboard
-	-u parse unixtime
-	-U parse to unixtime
+	-D duration like "-2h45m". unit as "ns", "us", "ms", "s", "m", "h"
 	-n print nothing but error
-	-d now time
-	-D duration like "-2h45m". unit as "ns", "us" (or "µs"), "ms", "s", "m", "h".
 `)
 		return
 	}
@@ -46,53 +47,55 @@ Flags:
 
 	param := os.Args[1]
 	if param[0] != '-' {
+		cmd = "-d"
 		data = param
 	} else {
 		cmd = param
 		if len(os.Args) > 2 {
 			if strings.ContainsRune(cmd, 'f') {
 				format = os.Args[2]
+				if len(os.Args) > 3 {
+					data = os.Args[3]
+				} else {
+					data = time.Now().Format(format)
+				}
 			} else {
 				data = os.Args[2]
 			}
+		} else {
+			data = time.Now().Format(format)
 		}
+	}
 
+	if len(data) == 0 {
+		rain.ExitIf(errors.New("data is empty"))
 	}
 
 	t := &timeFly{Data: []byte(data)}
 	show := true
 
-	if cmd == "" {
-		t.ParseTime(format)
-	} else {
-		for _, v := range cmd {
-			switch v {
-			case '-':
-			case 'u':
-				t.FillTime(format)
-				t.ParseUnixTime(format)
-			case 'U':
-				t.FillTime(format)
-				t.ParseToUnixTime(format)
-				goto RESULT
-			case 'c', 'f':
-				data, err = clipboard.ReadAll()
-				rain.ExitIf(err)
-				t.Data = []byte(data)
-				t.ParseTime(format)
-			case 'C':
-				t.ToClipboard()
-			case 'd':
-				t.Data = []byte(time.Now().Format(format))
-				t.ParseTime(format)
-			case 'D':
-				t.Data = []byte(t.ParseDuration().String())
-				goto RESULT
-			case 'n':
-				show = false
-			default:
-				rain.ExitIf(fmt.Errorf("invalid param: %c", v))
-			}
+	for _, v := range cmd {
+		switch v {
+		case '-', 'f':
+		case 'u':
+			t.ParseFromUnixTime(format)
+		case 'U':
+			t.ParseToUnixTime(format) // unixtime in data
+		case 'c':
+			data, err = clipboard.ReadAll()
+			rain.ExitIf(err)
+			t.Data = []byte(data)
+		case 'C':
+			t.ToClipboard()
+		case 'd':
+			t.ParseTime(format)
+		case 'D':
+			t.Data = []byte(cast.ToString(t.ParseDuration().Seconds()))
+			goto RESULT
+		case 'n':
+			show = false
+		default:
+			rain.ExitIf(fmt.Errorf("invalid param: %c", v))
 		}
 	}
 
@@ -111,7 +114,7 @@ func (t *timeFly) ToClipboard() {
 	clipboard.WriteAll(string(t.Data))
 }
 
-func (t *timeFly) ParseUnixTime(format string) {
+func (t *timeFly) ParseFromUnixTime(format string) {
 	tSec, err := cast.ToInt64E(string(t.Data))
 	rain.ExitIf(err)
 	t.t = time.Unix(tSec, 0)
@@ -119,14 +122,12 @@ func (t *timeFly) ParseUnixTime(format string) {
 }
 
 func (t *timeFly) ParseToUnixTime(format string) {
+	t.FillTime(format)
 	t.Data = []byte(cast.ToString(t.t.Unix()))
 }
 
 func (t *timeFly) FillTime(format string) {
-	if len(t.Data) == 0 {
-		t.t = time.Now()
-		t.Data = []byte(t.t.Format(format))
-	} else if t.t.IsZero() {
+	if t.t.IsZero() {
 		t.ParseTime(format)
 	}
 }
