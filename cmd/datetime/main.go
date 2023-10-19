@@ -136,13 +136,14 @@ func (t *timeFly) FillTime(format string) {
 }
 
 func (t *timeFly) ParseTime(format string) {
-	tTime, err := cast.ToTimeE(t.Data)
-	if err == nil {
-		t.t = tTime
-	} else {
-		tTime, err = cast.StringToDate(string(t.Data))
-		rain.ExitIf(err)
-		t.t = tTime
+	var err error
+	t.t, err = time.Parse(format, string(t.Data))
+	if err != nil {
+		t.t, err = cast.ToTimeE(t.Data)
+		if err != nil {
+			t.t, err = cast.StringToDate(string(t.Data))
+			rain.ExitIf(err)
+		}
 	}
 	t.Data = []byte(t.t.Format(format))
 }
