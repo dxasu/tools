@@ -51,6 +51,9 @@ Flags:
 		data = param
 	} else {
 		cmd = param
+		if cmd == "-f" {
+			cmd = "-fd"
+		}
 		if len(os.Args) > 2 {
 			if strings.ContainsRune(cmd, 'f') {
 				format = os.Args[2]
