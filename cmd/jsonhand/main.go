@@ -34,7 +34,7 @@ Flags:
 	-v json to struct with value
 	-c copy to clipboard
 	-n print nothing but error
-	-d as -uf default without params. 
+	-d as -uf default without params
 	-w open Json WebBrowser
 `)
 		return
@@ -104,7 +104,9 @@ Flags:
 			show = false
 		case 'w':
 			const jsonURL = "https://www.json.cn/"
-			println(jsonURL)
+			if show {
+				println(jsonURL)
+			}
 			rain.OpenBrower(jsonURL)
 			os.Exit(1)
 		default:
