@@ -18,8 +18,9 @@ import (
 func main() {
 	if rain.NeedHelp() {
 		println(`Usage:
-	datetime -[cCtTuUfnh]
+	datetime -[zfcCtTuUnh]
 Flags:
+	-z use utc+0. not location
 	-f formatStr need, "2006-01-02 15:04:05"
 	-u parse from unixtime(revert -U)
 	-c copy from clipboard(revert -C)
@@ -31,10 +32,11 @@ Flags:
 	}
 
 	var (
-		cmd    string
-		data   string
-		format string = "2006-01-02 15:04:05"
-		err    error
+		cmd        string
+		data       string
+		format     string = "2006-01-02 15:04:05"
+		err        error
+		timeRegion *time.Location = time.Local
 	)
 
 	if len(os.Args) == 1 {
@@ -45,8 +47,8 @@ Flags:
 
 	param := os.Args[1]
 	if param[0] != '-' {
-		cmd = "-d"
-		data = param
+		cmd = "-a"
+		data = strings.Join(os.Args[1:], " ")
 	} else {
 		cmd = param
 		if cmd == "-f" {
@@ -72,12 +74,14 @@ Flags:
 		rain.ExitIf(errors.New("data is empty"))
 	}
 
-	t := &timeFly{Data: []byte(data)}
+	t := &timeFly{Data: []byte(data), region: timeRegion}
 	show := true
 
 	for _, v := range cmd {
 		switch v {
 		case '-', 'f':
+		case 'a':
+			t.AutoParse(format)
 		case 'u':
 			t.ParseFromUnixTime(format)
 		case 'U':
@@ -94,6 +98,8 @@ Flags:
 			t.ParseDuration()
 		case 'T':
 			t.ParseToUnit()
+		case 'z':
+			t.region = time.UTC
 		case 'n':
 			show = false
 		default:
@@ -108,8 +114,9 @@ Flags:
 }
 
 type timeFly struct {
-	t    time.Time
-	Data []byte
+	t      time.Time
+	region *time.Location
+	Data   []byte
 }
 
 func (t *timeFly) ToClipboard() {
@@ -119,7 +126,7 @@ func (t *timeFly) ToClipboard() {
 func (t *timeFly) ParseFromUnixTime(format string) {
 	tSec, err := cast.ToInt64E(string(t.Data))
 	rain.ExitIf(err)
-	t.t = time.Unix(tSec, 0)
+	t.t = time.Unix(tSec, 0).In(t.region)
 	t.Data = []byte(t.t.Format(format))
 }
 
@@ -136,7 +143,7 @@ func (t *timeFly) FillTime(format string) {
 
 func (t *timeFly) ParseTime(format string) {
 	var err error
-	t.t, err = time.Parse(format, string(t.Data))
+	t.t, err = time.ParseInLocation(format, string(t.Data), t.region)
 	if err != nil {
 		t.t, err = cast.ToTimeE(t.Data)
 		if err != nil {
@@ -145,6 +152,31 @@ func (t *timeFly) ParseTime(format string) {
 		}
 	}
 	t.Data = []byte(t.t.Format(format))
+}
+
+func (t *timeFly) AutoParse(format string) {
+	_, err := cast.ToInt64E(string(t.Data))
+	if err == nil {
+		if len(t.Data) == len(cast.ToString(time.Now().Unix())) {
+			t.ParseFromUnixTime(format)
+		} else {
+			t.ParseToUnit()
+		}
+	} else {
+		var err error
+		t.t, err = time.ParseInLocation(format, string(t.Data), t.region)
+		if err != nil {
+			t.t, err = cast.ToTimeE(t.Data)
+			if err != nil {
+				t.t, err = cast.StringToDate(string(t.Data))
+			}
+		}
+		if err == nil {
+			t.Data = []byte(cast.ToString(t.t.Unix()))
+			return
+		}
+		t.ParseDuration()
+	}
 }
 
 // such as "300ms", "-1.5h" or "2h45m".
