@@ -18,16 +18,14 @@ import (
 func main() {
 	if rain.NeedHelp() {
 		println(`Usage:
-	datetime -[cCnduUf]
+	datetime -[cCtTuUfnh]
 Flags:
-	-f formatStr need, 2006-01-02 15:04:05
-	-u parse from unixtime
-	-U parse to unixtime
-	-d now time
-	-c copy from clipboard
-	-C copy to clipboard
-	-D duration like "-2h45m". unit as "ns", "us", "ms", "s", "m", "h"
+	-f formatStr need, "2006-01-02 15:04:05"
+	-u parse from unixtime(revert -U)
+	-c copy from clipboard(revert -C)
+	-t duration from "-2h45m6s6ms6us8ns"(revert -T)
 	-n print nothing but error
+	-h help
 `)
 		return
 	}
@@ -92,9 +90,10 @@ Flags:
 			t.ToClipboard()
 		case 'd':
 			t.ParseTime(format)
-		case 'D':
-			t.Data = []byte(cast.ToString(t.ParseDuration().Seconds()))
-			goto RESULT
+		case 't':
+			t.ParseDuration()
+		case 'T':
+			t.ParseToUnit()
 		case 'n':
 			show = false
 		default:
@@ -102,7 +101,7 @@ Flags:
 		}
 	}
 
-RESULT:
+	// RESULT:
 	if show {
 		println(string(t.Data))
 	}
@@ -150,8 +149,12 @@ func (t *timeFly) ParseTime(format string) {
 
 // such as "300ms", "-1.5h" or "2h45m".
 // Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
-func (t *timeFly) ParseDuration() time.Duration {
+func (t *timeFly) ParseDuration() {
 	dur, err := time.ParseDuration(string(t.Data))
 	rain.ExitIf(err)
-	return dur
+	t.Data = []byte(cast.ToString(dur.Seconds()))
+}
+
+func (t *timeFly) ParseToUnit() {
+	t.Data = []byte(cast.ToString(cast.ToDuration(string(t.Data)) * time.Second))
 }
