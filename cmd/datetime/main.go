@@ -22,6 +22,7 @@ func main() {
 Flags:
 	-z use utc+0. not location
 	-f formatStr need, "2006-01-02 15:04:05"
+	-a parse by auto fit
 	-u parse from unixtime(revert -U)
 	-c copy from clipboard(revert -C)
 	-t duration from "-2h45m6s6ms6us8ns"(revert -T)
