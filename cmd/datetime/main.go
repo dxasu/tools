@@ -19,7 +19,7 @@ const timeFormat = "2006-01-02 15:04:05"
 func main() {
 	if rain.NeedHelp() {
 		println(`Usage:
-	datetime -[zfcCtTuUnh]
+	datetime -[zfaAcCtTuUnh]
 Flags:
 	-z use utc+0. not location
 	-f formatStr need, "2006-01-02 15:04:05"
@@ -142,7 +142,7 @@ func (t *timeFly) ParseFromUnixTime(format string) {
 
 func (t *timeFly) ParseToUnixTime(format string) {
 	t.FillTime(format)
-	t.Data = []byte(cast.ToString(t.t.Unix()))
+	t.Data = []byte(DurToString(time.Duration(t.t.Unix()) * time.Second))
 }
 
 func (t *timeFly) FillTime(format string) {
@@ -185,7 +185,7 @@ func (t *timeFly) CalculateTime(tData string) {
 			}
 		}
 		if err == nil {
-			t.Data = []byte(cast.ToString(t.t.Sub(t2)))
+			t.Data = []byte(DurToString(t.t.Sub(t2)))
 			return
 		}
 		dur, err = ParseDuration(string(tData))
@@ -219,19 +219,17 @@ func (t *timeFly) AutoParse(format string) {
 			}
 		}
 		if err == nil {
-			t.Data = []byte(cast.ToString(t.t.Unix()))
+			t.Data = []byte(DurToString(time.Duration(t.t.Unix()) * time.Second))
 			return
 		}
 		t.ParseDuration()
 	}
 }
 
-// such as "300ms", "-1.5h" or "2h45m".
-// Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
 func (t *timeFly) ParseDuration() {
 	dur, err := ParseDuration(string(t.Data))
 	rain.ExitIf(err)
-	t.Data = []byte(cast.ToString(dur.Seconds()))
+	t.Data = []byte(DurToString(time.Duration(dur.Seconds()) * time.Second))
 }
 
 func (t *timeFly) ParseToUnit() {
