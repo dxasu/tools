@@ -60,6 +60,9 @@ Flags:
 		}
 
 		if len(os.Args) <= 2 {
+			if strings.ContainsRune(cmd, 'A') {
+				rain.ExitIf(errors.New("miss param when use -A"))
+			}
 			data = time.Now().In(timeRegion).Format(format)
 		} else if strings.ContainsAny(cmd, "fA") {
 			format = os.Args[2]
