@@ -14,6 +14,7 @@ import (
 )
 
 // var r = strings.NewReplacer("\r", "", "\n", "")
+const timeFormat = "2006-01-02 15:04:05"
 
 func main() {
 	if rain.NeedHelp() {
@@ -23,6 +24,7 @@ Flags:
 	-z use utc+0. not location
 	-f formatStr need, "2006-01-02 15:04:05"
 	-a parse by auto fit
+	-A time calculate
 	-u parse from unixtime(revert -U)
 	-c copy from clipboard(revert -C)
 	-t duration from "-2h45m6s6ms6us8ns"(revert -T)
@@ -31,11 +33,10 @@ Flags:
 `)
 		return
 	}
-
 	var (
 		cmd        string
 		data       string
-		format     string = "2006-01-02 15:04:05"
+		format     string = timeFormat
 		err        error
 		timeRegion *time.Location = time.Local
 	)
@@ -54,20 +55,23 @@ Flags:
 		cmd = param
 		if cmd == "-f" {
 			cmd = "-fd"
+		} else if strings.ContainsRune(cmd, 'z') {
+			timeRegion = time.UTC
 		}
-		if len(os.Args) > 2 {
-			if strings.ContainsRune(cmd, 'f') {
-				format = os.Args[2]
-				if len(os.Args) > 3 {
-					data = os.Args[3]
-				} else {
-					data = time.Now().Format(format)
-				}
+
+		if len(os.Args) <= 2 {
+			data = time.Now().In(timeRegion).Format(format)
+		} else if strings.ContainsAny(cmd, "fA") {
+			format = os.Args[2]
+			if len(os.Args) > 3 {
+				data = os.Args[3]
+			} else if strings.ContainsRune(cmd, 'A') {
+				data = time.Now().In(timeRegion).Format(timeFormat)
 			} else {
-				data = os.Args[2]
+				data = time.Now().In(timeRegion).Format(format)
 			}
 		} else {
-			data = time.Now().Format(format)
+			data = os.Args[2]
 		}
 	}
 
@@ -83,6 +87,8 @@ Flags:
 		case '-', 'f':
 		case 'a':
 			t.AutoParse(format)
+		case 'A':
+			t.CalculateTime(format)
 		case 'u':
 			t.ParseFromUnixTime(format)
 		case 'U':
@@ -152,7 +158,44 @@ func (t *timeFly) ParseTime(format string) {
 			rain.ExitIf(err)
 		}
 	}
-	t.Data = []byte(t.t.Format(format))
+	t.Data = []byte(t.t.In(t.region).Format(format))
+}
+
+func (t *timeFly) CalculateTime(tData string) {
+	t.FillTime(timeFormat)
+	sub := tData[0] == '-'
+	if sub {
+		tData = tData[1:]
+	}
+	secNum, err := cast.ToInt64E(string(tData))
+	var dur time.Duration
+	if err != nil {
+		var (
+			t2  time.Time
+			err error
+		)
+		t2, err = time.ParseInLocation(timeFormat, tData, t.region)
+		if err != nil {
+			t2, err = cast.ToTimeE(tData)
+			if err != nil {
+				t2, err = cast.StringToDate(string(tData))
+			}
+		}
+		if err == nil {
+			t.Data = []byte(cast.ToString(t.t.Sub(t2)))
+			return
+		}
+		dur, err = time.ParseDuration(string(tData))
+		rain.ExitIf(err)
+	} else {
+		dur = time.Duration(secNum)
+	}
+	if sub {
+		t.t = t.t.Add(-dur)
+	} else {
+		t.t = t.t.Add(dur)
+	}
+	t.Data = []byte(t.t.In(t.region).Format(timeFormat))
 }
 
 func (t *timeFly) AutoParse(format string) {
