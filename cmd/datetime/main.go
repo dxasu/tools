@@ -14,6 +14,7 @@ import (
 )
 
 // var r = strings.NewReplacer("\r", "", "\n", "")
+// PS D:\arena\tools\cmd\datetime> copy-item .\datetime.exe D:\gowrok\bin\datetime.exe
 const timeFormat = "2006-01-02 15:04:05"
 
 func main() {
@@ -142,7 +143,7 @@ func (t *timeFly) ParseFromUnixTime(format string) {
 
 func (t *timeFly) ParseToUnixTime(format string) {
 	t.FillTime(format)
-	t.Data = []byte(DurToString(time.Duration(t.t.Unix()) * time.Second))
+	t.Data = []byte(cast.ToString(t.t.Unix()))
 }
 
 func (t *timeFly) FillTime(format string) {
@@ -185,7 +186,7 @@ func (t *timeFly) CalculateTime(tData string) {
 			}
 		}
 		if err == nil {
-			t.Data = []byte(DurToString(t.t.Sub(t2)))
+			t.Data = []byte(DurationToString(t.t.Sub(t2)))
 			return
 		}
 		dur, err = ParseDuration(string(tData))
@@ -219,7 +220,7 @@ func (t *timeFly) AutoParse(format string) {
 			}
 		}
 		if err == nil {
-			t.Data = []byte(DurToString(time.Duration(t.t.Unix()) * time.Second))
+			t.Data = []byte(cast.ToString(t.t.Unix()))
 			return
 		}
 		t.ParseDuration()
@@ -229,11 +230,11 @@ func (t *timeFly) AutoParse(format string) {
 func (t *timeFly) ParseDuration() {
 	dur, err := ParseDuration(string(t.Data))
 	rain.ExitIf(err)
-	t.Data = []byte(DurToString(time.Duration(dur.Seconds()) * time.Second))
+	t.Data = []byte(cast.ToString(dur.Seconds()))
 }
 
 func (t *timeFly) ParseToUnit() {
-	t.Data = []byte(DurToString(cast.ToDuration(string(t.Data)) * time.Second))
+	t.Data = []byte(DurationToString(cast.ToDuration(string(t.Data)) * time.Second))
 }
 
 var errLeadingInt = errors.New("time: bad [0-9]*") // never printed
@@ -407,7 +408,7 @@ func ParseDuration(s string) (time.Duration, error) {
 	return time.Duration(d), nil
 }
 
-func DurToString(d time.Duration) string {
+func DurationToString(d time.Duration) string {
 	// Largest time is 2540400h10m10.000000000s
 	var buf [32]byte
 	w := len(buf)
@@ -446,32 +447,36 @@ func DurToString(d time.Duration) string {
 		w, u = fmtFrac(buf[:w], u, prec)
 		w = fmtInt(buf[:w], u)
 	} else {
-		w--
-		buf[w] = 's'
-
-		w, u = fmtFrac(buf[:w], u, 9)
-
-		// u is now integer seconds
-		w = fmtInt(buf[:w], u%60)
+		if u%60 > 0 {
+			w--
+			buf[w] = 's'
+			w, u = fmtFrac(buf[:w], u, 9)
+			// u is now integer seconds
+			w = fmtInt(buf[:w], u%60)
+		} else {
+			u /= uint64(time.Second)
+		}
 		u /= 60
 
 		// u is now integer minutes
 		if u > 0 {
-			w--
-			buf[w] = 'm'
-			w = fmtInt(buf[:w], u%60)
-			u /= 60
+			if u%60 > 0 {
+				w--
+				buf[w] = 'm'
+				w = fmtInt(buf[:w], u%60)
+			}
 
+			u /= 60
 			// u is now integer hours
 			// Stop at hours because days can be different lengths.
-			if u > 0 {
+			if u > 0 && u%24 > 0 {
 				w--
 				buf[w] = 'h'
 				w = fmtInt(buf[:w], u%24)
 			}
 
 			u /= 24
-			if u > 0 {
+			if u > 0 && u%365 > 0 {
 				w--
 				buf[w] = 'd'
 				w = fmtInt(buf[:w], u%365)
