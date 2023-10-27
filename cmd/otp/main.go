@@ -36,6 +36,8 @@ Flags:
 
 	params := make([]string, len(os.Args))
 	copy(params, os.Args)
+	needCopy := false
+	notPrint := false
 RESTART:
 	var cmd string
 	var printText strings.Builder
@@ -63,6 +65,7 @@ RESTART:
 		if cmd[0] != '-' {
 			rain.ExitIf(fmt.Errorf("invalid params: %s", cmd))
 		}
+		needCopy, notPrint = strings.ContainsRune(cmd, 'c'), strings.ContainsRune(cmd, 'n')
 		if len(params) >= 4 && strings.ContainsAny(cmd, "Gg") {
 			needPng := strings.ContainsRune(cmd, 'G')
 			issuer, account := params[2], params[3]
@@ -81,11 +84,11 @@ RESTART:
 
 	if printText.Len() != 0 {
 		result := printText.String()
-		if strings.ContainsRune(cmd, 'c') {
+		if needCopy {
 			clipboard.WriteAll(result)
 		}
 
-		if strings.ContainsRune(cmd, 'n') {
+		if notPrint {
 			return
 		}
 		println(result)
