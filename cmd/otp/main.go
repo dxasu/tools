@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"image/png"
 	"os"
+	"strings"
 	"time"
 
 	"bytes"
+	"io/fs"
 	"io/ioutil"
 
 	"bay.core/lancet/rain"
+	"github.com/atotto/clipboard"
 	_ "github.com/dxasu/tools/lancet/version"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
@@ -18,28 +21,75 @@ import (
 // otpauth://totp/luck/luck@sz.com?secret=qlt6vmy6svfx4bt4rpmisaiyol6hihca&issuer=luck
 func main() {
 	if len(os.Args) < 2 || rain.NeedHelp() {
-		println(`input:
-otp "otpauth://totp/xxxxxx"
-otp [-p] luck luck@sz.com`)
-		return
-	}
-	if len(os.Args) >= 3 {
-		var needPng bool
-		issuer, account := os.Args[1], os.Args[2]
-		if len(os.Args) >= 4 {
-			needPng = os.Args[1] == "-p"
-			issuer, account = os.Args[1], os.Args[2]
-		}
-		generate(issuer, account, needPng)
+		println(`Usage:
+otp [filename] otpauth://totp/xxxxxx
+otp -[grpcn] 
+Flags:
+	-g generate link. otp -g luck luck@sz.com
+	-G -g and output png
+	-r read code from file
+	-c copy to clipboard
+	-n print nothing but error
+`)
 		return
 	}
 
-	otpUrl := os.Args[1]
-	w, _ := otp.NewKeyFromURL(otpUrl)
-	sec := w.Secret()
-	code, _ := totp.GenerateCode(sec, time.Now().UTC())
-	// valid := totp.Validate(code, sec)
-	fmt.Println(code)
+	params := make([]string, len(os.Args))
+	copy(params, os.Args)
+RESTART:
+	var cmd string
+	var printText strings.Builder
+	if strings.HasPrefix(params[1], "otpauth") || len(params) >= 3 && strings.HasPrefix(params[2], "otpauth") {
+		startIdx := 1
+		otpName := ""
+		if len(params) >= 3 && strings.HasPrefix(params[2], "otpauth") {
+			otpName = params[1]
+			startIdx = 2
+		}
+		otpUrl := strings.Join(params[startIdx:], " ")
+		w, err := otp.NewKeyFromURL(otpUrl)
+		rain.ExitIf(err)
+		key := w.Secret()
+		code, err := totp.GenerateCode(key, time.Now().UTC())
+		rain.ExitIf(err)
+		printText.WriteString(code)
+		// valid := totp.Validate(code, key)
+		if otpName != "" {
+			err = os.WriteFile(otpName, []byte(otpUrl), fs.ModePerm)
+			rain.ExitIf(err)
+		}
+	} else {
+		cmd = params[1]
+		if cmd[0] != '-' {
+			rain.ExitIf(fmt.Errorf("invalid params: %s", cmd))
+		}
+		if len(params) >= 4 && strings.ContainsAny(cmd, "Gg") {
+			needPng := strings.ContainsRune(cmd, 'G')
+			issuer, account := params[2], params[3]
+			key := generate(issuer, account, needPng)
+			printText.WriteString(key)
+		} else if strings.ContainsRune(cmd, 'r') && len(params) >= 3 {
+			fileName := params[2]
+			bys, err := os.ReadFile(fileName)
+			rain.ExitIf(err)
+			params = []string{os.Args[0], string(bys)}
+			goto RESTART
+		} else {
+			rain.ExitIf(fmt.Errorf("unimplement or invalid params: %s", cmd))
+		}
+	}
+
+	if printText.Len() != 0 {
+		result := printText.String()
+		if strings.ContainsRune(cmd, 'c') {
+			clipboard.WriteAll(result)
+		}
+
+		if strings.ContainsRune(cmd, 'n') {
+			return
+		}
+		println(result)
+	}
 }
 
 func display(key *otp.Key, data []byte) {
@@ -72,7 +122,7 @@ func display(key *otp.Key, data []byte) {
 // 	return passcode
 // }
 
-func generate(issuer, account string, needPng bool) {
+func generate(issuer, account string, needPng bool) string {
 	key, err := totp.Generate(totp.GenerateOpts{
 		Issuer:      issuer,
 		AccountName: account,
@@ -85,5 +135,5 @@ func generate(issuer, account string, needPng bool) {
 		png.Encode(&buf, img)
 		display(key, buf.Bytes())
 	}
-	println(key.String())
+	return key.String()
 }
