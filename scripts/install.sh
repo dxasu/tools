@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+project=jsonhand
 set -e
 
 unameOut="$(uname -s)"
@@ -34,7 +34,7 @@ check_input() {
 }
 
 if [[ $platform == linux ]] && [[ $(cat /etc/os-release | grep "^ID=" | sed 's/^ID=//') == "arch" ]]; then
-    echo -e "☺  ArchLinux推荐使用AUR安装/升级（\`yay -S kd\`），更方便维护。是否继续使用此脚本安装？[Y/n] "
+    echo -e "☺  ArchLinux推荐使用AUR安装/升级（\`yay -S ${project}\`），更方便维护。是否继续使用此脚本安装？[Y/n] "
     check_input yn ans
     [[ $ans == "n" ]] && exit 0
     # TODO (k): <2024-01-02>
@@ -42,10 +42,10 @@ fi
 
 case $(uname -m) in
     x86_64 | amd64)
-        pkg=kd_${platform}_amd64
+        pkg=${project}_${platform}_amd64
         ;;
     aarch64 | arm64)
-        pkg=kd_${platform}_arm64
+        pkg=${project}_${platform}_arm64
         ;;
     *)
         echo "[✘] 暂时不支持此架构，如有需求请提交issue"
@@ -57,7 +57,7 @@ LATEST_RELEASE_URL="https://github.com/dxasu/tools/releases/latest/download"
 # LATEST_RELEASE_URL="http://localhost:8901"
 
 BIN_URL=${LATEST_RELEASE_URL}/${pkg}
-TEMP_PATH=/tmp/kd.downloaded
+TEMP_PATH=/tmp/${project}.downloaded
 
 for i in curl wget; do
     command -V $tool >/dev/null && tool=$i && break
@@ -81,7 +81,7 @@ if (($? != 0)); then
     exit 1
 fi
 
-INST_PATH=/usr/local/bin/kd
+INST_PATH=/usr/local/bin/${project}
 
 echo "[✔] 已经下载完成，文件临时保存位置：${TEMP_PATH}"
 if [[ $(whoami) == "root" ]]; then
@@ -89,8 +89,8 @@ if [[ $(whoami) == "root" ]]; then
 else
     if [[ ":$PATH:" == *":$HOME/.local/bin:"* ]]; then
         usesudo=0
-        INST_PATH=$HOME/.local/bin/kd
-        echo "≫  检测到PATH中包含~/.local/bin，kd将保存到该目录下"
+        INST_PATH=$HOME/.local/bin/${project}
+        echo "≫  检测到PATH中包含~/.local/bin，${project}将保存到该目录下"
     else
         usesudo=1
     fi
