@@ -108,5 +108,4 @@ chmod +x ${INST_PATH} && echo "[✔] 已经添加可执行权限"
 echo "≫  测试输出版本号"
 ${INST_PATH} --version
 
-echo "≫  启动守护进程"
-${INST_PATH} --daemon && echo "[✔] DONE :)"
+echo "≫  安装成功，${project}已保存到：${INST_PATH}"
