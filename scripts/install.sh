@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-project=jsonhand
+project="jsonhand"
 set -e
 
 unameOut="$(uname -s)"
