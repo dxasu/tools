@@ -99,7 +99,7 @@ func ascllimage(m image.Image, target string, level int) {
 			avg := uint8(g >> 8)
 			num := avg / 18
 			dstFile.WriteString(arr[num])
-			if j == dx-1 {
+			if j+level+1 >= dx {
 				dstFile.WriteString("\n")
 			}
 		}

@@ -17,6 +17,14 @@ type Option struct {
 	Param string
 }
 
+func (o Option) Int() int {
+	level := 0
+	if o.Param != "" {
+		level, _ = strconv.Atoi(o.Param)
+	}
+	return level
+}
+
 type PicStruct struct {
 	Command string
 	Option  Option
@@ -62,16 +70,14 @@ func init() {
 	}
 
 	// 图片转字符
-	commandList["zf"] = func(p PicStruct, m image.Image) error {
-		level, _ := strconv.Atoi(p.Option.Param)
-		ascllimage(m, p.Target+".txt", level)
+	commandList["piczfh"] = func(p PicStruct, m image.Image) error {
+		ascllimage(m, p.Target+".txt", p.Option.Int())
 		return nil
 	}
 
 	// 字符转字符画
 	commandList["zfh"] = func(p PicStruct, _ image.Image) error {
-		// level, _ := strconv.Atoi(p.Option.Param)
-		charList := make([][]string, 8)
+		charList := make([][]string, 0, 8)
 		zifu := strings.Fields(p.Source)
 		for _, v := range zifu {
 			charList = append(charList, charpaint.String(v))
@@ -79,10 +85,9 @@ func init() {
 		charpaint.Print(charList...)
 		return nil
 	}
-	// 字符转字符画
-	commandList["zfhcs"] = func(p PicStruct, _ image.Image) error {
-		// level, _ := strconv.Atoi(p.Option.Param)
-		charList := make([][]string, 8)
+	// 字符转字符画 彩色
+	commandList["zfh2"] = func(p PicStruct, _ image.Image) error {
+		charList := make([][]string, 0, 8)
 		zifu := strings.Fields(p.Source)
 		for _, v := range zifu {
 			charList = append(charList, charpaint.Rainbow(v))

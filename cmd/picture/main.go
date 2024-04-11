@@ -14,11 +14,11 @@ import (
 
 //帮助提示信息
 var usage = `Usage: picture COMMAND [OPTION] source_image [OUTPUT]
-COMMAND: ysfz(颜色翻转) hd(图片灰度) zfh(字符画)
+COMMAND: ysfz(颜色翻转) hd(图片灰度) piczfh(图片转字符画) zfh/zfh2(字符画) 
 Example: picture ysfz source_image.jpg
-  Options is flow:
-    -l         level, default is 0, range is 0-100
-	-h         --help, show this help message
+Options as follows:
+  -l         level, default is 0, range is 0-100
+  -h         --help, show this help message
 `
 
 //该工具支持将图片色彩反转，图片灰化，图片转为字符画。
