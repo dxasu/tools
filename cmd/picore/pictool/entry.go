@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/dxasu/tools/cmd/picture/charpaint"
+	"github.com/dxasu/tools/cmd/picore/charpaint"
 )
 
 type Option struct {

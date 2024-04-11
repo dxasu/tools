@@ -1,4 +1,4 @@
-module github.com/dxasu/tools/cmd/picture
+module github.com/dxasu/tools/cmd/picore
 
 go 1.18
 

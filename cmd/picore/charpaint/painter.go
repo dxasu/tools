@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dxasu/tools/cmd/picture/charpaint/resource"
+	"github.com/dxasu/tools/cmd/picore/charpaint/resource"
 )
 
 var (
