@@ -76,7 +76,7 @@ func rectImage(m image.Image, newdx int) *image.RGBA {
 }
 
 //图片转为字符画（简易版）
-func ascllimage(m image.Image, level int) []string {
+func ascllimage(m image.Image, level int) string {
 	if m.Bounds().Dx() > 300 {
 		m = rectImage(m, 300)
 	}
@@ -85,18 +85,18 @@ func ascllimage(m image.Image, level int) []string {
 	dy := bounds.Dy()
 	arr := []string{"M", "N", "H", "Q", "$", "O", "C", "?", "7", ">", "!", ":", "-", ";", "."}
 
-	data := make([]string, 0)
+	data := strings.Builder{}
 	for i := 0; i < dy; i += level + 1 {
 		for j := 0; j < dx; j += level + 1 {
 			colorRgb := m.At(j, i)
 			_, g, _, _ := colorRgb.RGBA()
 			avg := uint8(g >> 8)
 			num := avg / 18
-			data = append(data, arr[num])
+			data.WriteString(arr[num])
 			if j+level+1 >= dx {
-				data = append(data, "\n")
+				data.WriteString("\n")
 			}
 		}
 	}
-	return data
+	return data.String()
 }
