@@ -71,7 +71,8 @@ func init() {
 
 	// 图片转字符
 	commandList["piczfh"] = func(p PicStruct, m image.Image) error {
-		ascllimage(m, p.Target+".txt", p.Option.Int())
+		content := ascllimage(m, p.Option.Int())
+		charpaint.Print(content)
 		return nil
 	}
 
