@@ -83,7 +83,7 @@ func ascllimage(m image.Image, level int) []string {
 	bounds := m.Bounds()
 	dx := bounds.Dx()
 	dy := bounds.Dy()
-	arr := []string{"M", "N", "H", "Q", "$", "O", "C", "?", "7", ">", "!", ":", "–", ";", "."}
+	arr := []string{"M", "N", "H", "Q", "$", "O", "C", "?", "7", ">", "!", ":", "-", ";", "."}
 
 	data := make([]string, 0)
 	for i := 0; i < dy; i += level + 1 {
