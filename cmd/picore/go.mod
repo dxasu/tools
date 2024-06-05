@@ -1,6 +1,6 @@
-module github.com/dxasu/tools/cmd/picture
+module github.com/dxasu/tools/cmd/picore
 
-go 1.21
+go 1.18
 
 replace bay.core/lancet/rain => ../../lancet/rain
 

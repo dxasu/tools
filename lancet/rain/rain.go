@@ -1,8 +1,11 @@
 package rain
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
 	"os/signal"
+	"runtime"
 	"syscall"
 )
 
@@ -30,4 +33,19 @@ func IsInteractive() bool {
 		return false
 	}
 	return fileInfo.Mode()&(os.ModeCharDevice|os.ModeCharDevice) != 0
+}
+
+func OpenBrower(uri string) error {
+	// 不同平台启动指令不同
+	var commands = map[string]string{
+		"windows": "explorer",
+		"darwin":  "open",
+		"linux":   "xdg-open",
+	}
+	run, ok := commands[runtime.GOOS]
+	if !ok {
+		return fmt.Errorf("invalid platform: %s", runtime.GOOS)
+	}
+	cmd := exec.Command(run, uri)
+	return cmd.Run()
 }

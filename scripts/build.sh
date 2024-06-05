@@ -1,43 +1,85 @@
-#!/bin/bash
-OS=windows
-if [ $1 ]
-then
-    OS=$1
-fi
-BIN_DIR=../../bin
-function build() {
-    PROJECT=$1
-    if [ $OS = "windows" ]
-    then
-        if [ -f "$BIN_DIR/$PROJECT.exe" ]
-        then
-            return
-        fi
-    elif [ -f "$BIN_DIR/$PROJECT" ]
-        then
-        return
-    fi
-    VERSION_PATH=github.com/dxasu/tools/lancet/version
-    VER=$(echo "No.$(git log --oneline |wc -l)" | sed 's/ //g')
-    TAG=$(git log -n1 --pretty=format:%h |git tag --contains)
-    # STATUS="-X '$VERSION_PATH.GitStatus=$(git status)'"
-    LDFLAG="-s -X '$VERSION_PATH.Version=$VER $TAG'  -X '$VERSION_PATH.GitCommit=$(git rev-parse --short HEAD)' -X '$VERSION_PATH.BuildTime=$(date "+%Y-%m-%d %H:%M:%S")'"
-    CGO_ENABLED=0 GOOS=$OS GOARCH=amd64 go build -ldflags "$LDFLAG" -o $BIN_DIR
-    echo $PROJECT
-# windows 下编译
-# SET CGO_ENABLED=0
-# SET GOOS=darwin
-# SET GOARCH=amd64
-# go build
+#!/usr/bin/env bash
+
+CURDIR=$(
+	cd $(dirname $0)
+	pwd
+)
+PROJECT_DIR=$(dirname $CURDIR)
+cd $PROJECT_DIR
+
+targetdir=${PROJECT_DIR}/build
+mkdir -p $targetdir
+
+do_build() {
+	local os=$1
+	local arch=$2
+	local targetfile=$3
+
+	local cgo=1 cc=
+
+	if [[ $targetfile == "" ]] && [[ $os != "" ]] && [[ $arch != "" ]]; then
+        echo
+		echo "≫  Building for $os $arch..."
+
+		local filename=kd_${os}_${arch}
+		[[ $os == "darwin" ]] && filename=kd_macos_${arch}
+
+		local targetfile=${targetdir}/${filename}
+		[[ $os == "windows" ]] && targetfile=${targetfile}.exe
+	fi
+
+	case $os in
+	windows)
+		local cc=x86_64-w64-mingw32-gcc
+		# local buildopts=-buildmode=c-shared
+		;;
+	linux)
+		if [[ $arch == "arm64" ]]; then
+			local cc=aarch64-linux-gnu-gcc
+		fi
+		;;
+	darwin)
+		# TODO (k): <2023-12-21>
+		;;
+	esac
+
+    set -x
+	GOOS=$os GOARCH=$arch CGO_ENABLED=$cgo CC=$cc go build ${buildopts} -o ${targetfile} -ldflags="-s -w" -tags urfave_cli_no_docs cmd/jsonhand/main.go
+    local ret=$?
+    set +x
+
+	if (($ret == 0)); then
+		echo "    [✔] Finished -> ${targetfile}"
+	else
+		echo "    [✘] Failed to build for $os $arch"
+	fi
 }
 
-cd ../cmd
-for dir in `ls`
-do
-    if [ -d $dir ] 
-    then
-        cd $dir
-        build $dir
-        cd ..
-    fi
-done
+build_all() {
+	declare -A d=(
+		["darwin"]="amd64 arm64"
+		["linux"]="amd64 arm64"
+		["windows"]="amd64"
+	)
+	rm -rfv $targetdir/*
+	for os in "${!d[@]}"; do
+		for arch in ${d[$os]}; do
+			do_build $os $arch $targetfile
+		done
+	done
+}
+
+case $1 in
+"")
+	echo ">>> Building for current workspace..."
+	# do_build '' '' ${PROJECT_DIR}/kd
+	do_build '' '' /usr/local/bin/kd
+	exit
+	;;
+-a)
+	build_all
+	;;
+*)
+	do_build $*
+	;;
+esac

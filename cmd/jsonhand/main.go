@@ -21,7 +21,7 @@ import (
 func main() {
 	if rain.NeedHelp() {
 		println(`Usage:
-	jsonhand -[juL | fFz | qsSvcn] [xxx | yaml]
+	jsonhand -[juL | fFz | qsSvcn | dw] [xxx | yaml]
 Flags:
 	-j to json by yaml, yml, toml, ini, env. Data source must from clipboard
 	-u unquote string to json
@@ -34,7 +34,8 @@ Flags:
 	-v json to struct with value
 	-c copy to clipboard
 	-n print nothing but error
-	-d as -uf default without params. 
+	-d as -uf default without params
+	-w open Json WebBrowser
 `)
 		return
 	}
@@ -101,6 +102,13 @@ Flags:
 			j.ParseToJson(os.Args[2])
 		case 'n':
 			show = false
+		case 'w':
+			const jsonURL = "https://www.json.cn/"
+			if show {
+				println(jsonURL)
+			}
+			rain.OpenBrower(jsonURL)
+			os.Exit(1)
 		default:
 			rain.ExitIf(fmt.Errorf("invalid param: %c", v))
 		}
