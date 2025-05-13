@@ -85,6 +85,8 @@ Flags:
 			j.Quote()
 		case 'u':
 			j.UnQuote()
+		case 'U':
+			j.UnQuoteForce()
 		case 's':
 			j.ToStruct(true)
 		case 'S':
@@ -131,6 +133,27 @@ func (j *jsonFly) Zip() {
 
 func (j *jsonFly) UnQuote() {
 	data, err := strconv.Unquote(string(j.Data))
+	rain.ExitIf(err)
+	j.Data = []byte(data)
+}
+
+func (j *jsonFly) UnQuoteForce() {
+	data, err := strconv.Unquote(string(j.Data))
+	if err != nil {
+		rawData := bytes.TrimSpace(j.Data)
+		var repData []byte
+		if len(rawData) > 0 && rawData[0] != '"' {
+			repData = append([]byte{'"'}, rawData...)
+		}
+		if len(rawData) > 0 && rawData[len(rawData)-1] != '"' {
+			repData = append(rawData, '"')
+		}
+		_data, err2 := strconv.Unquote(string(repData))
+		if err2 == nil {
+			data = _data
+			err = nil
+		}
+	}
 	rain.ExitIf(err)
 	j.Data = []byte(data)
 }
@@ -187,6 +210,22 @@ func (j *jsonFly) ParseToJson(t string) {
 
 func (j *jsonFly) Default() {
 	data, err1 := strconv.Unquote(string(j.Data))
+	if err1 != nil {
+		rawData := bytes.TrimSpace(j.Data)
+		var repData []byte
+		if len(rawData) > 0 && rawData[0] != '"' {
+			repData = append([]byte{'"'}, rawData...)
+		}
+		if len(rawData) > 0 && rawData[len(rawData)-1] != '"' {
+			repData = append(rawData, '"')
+		}
+		_data, err2 := strconv.Unquote(string(repData))
+		if err2 == nil {
+			data = _data
+			err1 = nil
+		}
+	}
+
 	if err1 == nil {
 		j.Data = []byte(data)
 	}
