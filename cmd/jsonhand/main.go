@@ -217,7 +217,7 @@ func (j *jsonFly) Default() {
 			repData = append([]byte{'"'}, rawData...)
 		}
 		if len(rawData) > 0 && rawData[len(rawData)-1] != '"' {
-			repData = append(rawData, '"')
+			repData = append(repData, '"')
 		}
 		_data, err2 := strconv.Unquote(string(repData))
 		if err2 == nil {
