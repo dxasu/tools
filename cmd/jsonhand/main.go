@@ -24,7 +24,7 @@ func main() {
 	jsonhand -[juL | fFz | qsSvcn | dw] [xxx | yaml]
 Flags:
 	-j to json by yaml, yml, toml, ini, env. Data source must from clipboard
-	-u unquote string to json
+	-u unquote string to json (-U with force)
 	-L auto name with _sub for sub struct
 	-o ForceFloats extract from json (effective on -sSv)
 	-f format json (-F strong)
@@ -34,7 +34,7 @@ Flags:
 	-v json to struct with value
 	-c copy to clipboard
 	-n print nothing but error
-	-d as -uf default without params
+	-d as -Uf default without params
 	-w open Json WebBrowser
 `)
 		return
@@ -58,7 +58,7 @@ Flags:
 		data, err = clipboard.ReadAll()
 		rain.ExitIf(err)
 	} else {
-		data = os.Args[2]
+		data = strings.Join(os.Args[2:], " ")
 	}
 
 	if len(data) == 0 {
@@ -146,7 +146,7 @@ func (j *jsonFly) UnQuoteForce() {
 			repData = append([]byte{'"'}, rawData...)
 		}
 		if len(rawData) > 0 && rawData[len(rawData)-1] != '"' {
-			repData = append(rawData, '"')
+			repData = append(repData, '"')
 		}
 		_data, err2 := strconv.Unquote(string(repData))
 		if err2 == nil {
@@ -217,7 +217,7 @@ func (j *jsonFly) Default() {
 			repData = append([]byte{'"'}, rawData...)
 		}
 		if len(rawData) > 0 && rawData[len(rawData)-1] != '"' {
-			repData = append(rawData, '"')
+			repData = append(repData, '"')
 		}
 		_data, err2 := strconv.Unquote(string(repData))
 		if err2 == nil {
