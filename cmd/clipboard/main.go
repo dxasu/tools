@@ -1,11 +1,10 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
-	"time"
+	"strings"
 
 	"bay.core/lancet/rain"
 	"github.com/atotto/clipboard"
@@ -13,31 +12,42 @@ import (
 )
 
 func main() {
-	timeout := flag.Duration("t", 0, "Erase clipboard after timeout.  Durations are specified like \"20s\" or \"2h45m\".  0 (default) means never erase.")
-	paste := flag.Bool("p", false, "paste into stdout from clipboard")
-	flag.Parse()
+	if len(os.Args) == 2 && os.Args[1] == "-h" {
+		cmd := os.Args[0]
+		println(cmd, `# print clipboard content`)
+		println(cmd, `[-p] xxx or echo xxx|`+cmd+` [-p] # copy xxx to clipboard, -p: print to stdout`)
+		println(cmd, `[-p] < file  # copy file to clipboard, -p: print to stdout`)
+		return
+	}
+	stat, err := os.Stdin.Stat()
+	rain.ExitIf(err)
 
-	if *paste {
-		pasteTo()
+	if (stat.Mode()&os.ModeCharDevice) != 0 && len(os.Args) == 1 {
+		content, err := clipboard.ReadAll()
+		rain.ExitIf(err)
+		fmt.Println(content)
 		return
 	}
 
-	out, err := ioutil.ReadAll(os.Stdin)
-	rain.ExitIf(err)
-	err = clipboard.WriteAll(string(out))
-	rain.ExitIf(err)
-	if timeout != nil && *timeout > 0 {
-		<-time.After(*timeout)
-		text, err := clipboard.ReadAll()
-		rain.ExitIf(err)
-		if text == string(out) {
-			clipboard.WriteAll("")
-		}
-	}
-}
+	var data string
 
-func pasteTo() {
-	content, err := clipboard.ReadAll()
+	bPrint := len(os.Args) > 1 && os.Args[1] == "-p"
+	var idx = 1
+	if bPrint {
+		idx = 2
+	}
+
+	if len(os.Args) > idx {
+		data = strings.Join(os.Args[idx:], " ")
+	} else {
+		out, err := io.ReadAll(os.Stdin)
+		rain.ExitIf(err)
+		data = string(out[:len(out)-1])
+	}
+
+	err = clipboard.WriteAll(data)
 	rain.ExitIf(err)
-	fmt.Print(content)
+	if bPrint {
+		println(data)
+	}
 }
