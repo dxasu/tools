@@ -8,8 +8,8 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"bay.core/lancet/rain"
-	_ "github.com/dxasu/tools/lancet/version"
+	"github.com/dxasu/pure/rain"
+	_ "github.com/dxasu/pure/version"
 	"github.com/spf13/cast"
 
 	"github.com/dxasu/corekey"

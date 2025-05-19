@@ -1,2 +1,4 @@
-github.com/dxasu/tools/lancet/version v0.0.0-20230817102921-3ddac65cae69 h1:q/NXZrm8zLpbNEBD0ZYwtee8giH9Xs9fQwoFG06+i/c=
-github.com/dxasu/tools/lancet/version v0.0.0-20230817102921-3ddac65cae69/go.mod h1:lttLrOYSMyCee+k4q2xjjrhwyK3J/62snSMsn18o+zw=
+github.com/dxasu/pure v1.0.0 h1:/vBHiNY+xw5IlKzixFlhcd+3IvNP6bRhmGWDWMBV0Ek=
+github.com/dxasu/pure v1.0.0/go.mod h1:WO0VE9hLPHItrnwzo2I/u6x+9P4jkY1agvfcugltfZo=
+github.com/dxasu/tools/lancet/version v0.0.0-20250516121445-9d9c0e861c8f h1:Nu732hQu6Ws35lcyF1caLFHd7VPLX0fk/IVuQoB/G9U=
+github.com/dxasu/tools/lancet/version v0.0.0-20250516121445-9d9c0e861c8f/go.mod h1:Rpf16u4Kg55e2jF+t7q8PfTtx1BXx2xaoIzRs8xPQpY=

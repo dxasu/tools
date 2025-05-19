@@ -6,13 +6,13 @@ import (
 	"os"
 	"strings"
 
-	"bay.core/lancet/rain"
+	"github.com/dxasu/pure/rain"
 
+	_ "github.com/dxasu/pure/version"
 	"github.com/dxasu/tools/cmd/picore/pictool"
-	_ "github.com/dxasu/tools/lancet/version"
 )
 
-//帮助提示信息
+// 帮助提示信息
 var usage = `Usage: picore COMMAND [OPTION] source_image [OUTPUT]
 COMMAND: ysfz(颜色翻转) hd(图片灰度) piczfh(图片转字符画) zfh/zfh2(字符画) 
 Example: picore ysfz source_image.jpg
@@ -21,7 +21,7 @@ Options as follows:
   -h         --help, show this help message
 `
 
-//该工具支持将图片色彩反转，图片灰化，图片转为字符画。
+// 该工具支持将图片色彩反转，图片灰化，图片转为字符画。
 func main() {
 	args := os.Args //获取用户输入的所有参数
 	if len(args) > 6 || len(args) < 3 || rain.NeedHelp() {

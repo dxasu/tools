@@ -6,7 +6,7 @@
 # AQUA   := $(shell tput -Txterm setaf 6)
 # WHITE  := $(shell tput -Txterm setaf 7)
 # RESET  := $(shell tput -Txterm sgr0)
-VERSION_PATH = github.com/dxasu/tools/lancet/version
+VERSION_PATH = github.com/dxasu/pure/version
 # 判断当前commit是否有tag如果有tag则显示tag没有则显示 commit次数.哈希
 VER = $(shell echo "No.$(shell git log --oneline |wc -l)" | sed 's/ //g')
 # 用于判断当前是否有tag

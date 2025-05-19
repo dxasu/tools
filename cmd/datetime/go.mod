@@ -1,12 +1,10 @@
 module github.com/dxasu/tools/cmd/datetime
 
-go 1.18
-
-replace bay.core/lancet/rain => ../../lancet/rain
+go 1.21
 
 require (
-	bay.core/lancet/rain v0.0.0-00010101000000-000000000000
 	github.com/atotto/clipboard v0.1.4
-	github.com/dxasu/tools/lancet/version v0.0.0-20230817085701-358c17504e09
+	github.com/dxasu/pure v1.0.0
+	github.com/dxasu/tools/lancet/version v0.0.0-20250516121445-9d9c0e861c8f
 	github.com/spf13/cast v1.5.1
 )

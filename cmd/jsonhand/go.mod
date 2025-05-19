@@ -2,12 +2,10 @@ module github.com/dxasu/tools/cmd/jsonhand
 
 go 1.21
 
-replace bay.core/lancet/rain => ../../lancet/rain
-
 require (
-	bay.core/lancet/rain v0.0.0-00010101000000-000000000000
 	github.com/atotto/clipboard v0.1.4
-	github.com/dxasu/tools/lancet/version v0.0.0-20230817085701-358c17504e09
+	github.com/dxasu/pure v1.0.0
+	github.com/spf13/cast v1.5.1
 	github.com/spf13/viper v1.16.0
 )
 
@@ -18,7 +16,6 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/spf13/afero v1.9.5 // indirect
-	github.com/spf13/cast v1.5.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect

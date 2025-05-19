@@ -9,10 +9,10 @@ import (
 	"strconv"
 	"strings"
 
-	"bay.core/lancet/rain"
 	"github.com/atotto/clipboard"
+	"github.com/dxasu/pure/rain"
+	_ "github.com/dxasu/pure/version"
 	"github.com/dxasu/tools/cmd/jsonhand/j2struct"
-	_ "github.com/dxasu/tools/lancet/version"
 	"github.com/spf13/viper"
 )
 

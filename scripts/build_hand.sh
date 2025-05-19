@@ -17,7 +17,7 @@ function build() {
         then
         return
     fi
-    VERSION_PATH=github.com/dxasu/tools/lancet/version
+    VERSION_PATH=github.com/dxasu/pure/version
     VER=$(echo "No.$(git log --oneline |wc -l)" | sed 's/ //g')
     TAG=$(git log -n1 --pretty=format:%h |git tag --contains)
     # STATUS="-X '$VERSION_PATH.GitStatus=$(git status)'"
