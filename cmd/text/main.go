@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"text/array"
+	"text/csv"
 
 	"strings"
 
@@ -24,9 +26,9 @@ var (
 
 // 根命令
 var rootCmd = &cobra.Command{
-	Use:   "table",
-	Short: "table formatting",
-	Long:  `table is a command line tool for table formatting`,
+	Use:   "text",
+	Short: "text formatting",
+	Long:  `text is a command line tool for text formatting`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		// 主命令逻辑（若直接运行根命令时触发）
 	},
@@ -47,7 +49,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		output := bytes.NewBuffer(nil)
-		t := text.NewText(output, true, data)
+		t := text.NewText(output, header, data)
 		t.SetSymbols(&text.SymbolCustom{
 			Row:    rowChar,
 			Column: columnChar,
@@ -70,18 +72,19 @@ var rootCmd = &cobra.Command{
 }
 
 func main() {
+	csv.Init(rootCmd)
+	array.Init(rootCmd)
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 }
 
-// 全局标志（对所有子命令生效）
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&rowChar, "row", "r", "", "row character")
-	rootCmd.PersistentFlags().StringVarP(&columnChar, "column", "c", "", "column character")
-	rootCmd.PersistentFlags().BoolVarP(&minify, "minify", "m", true, "minify output when char is empty")
-	rootCmd.PersistentFlags().BoolVarP(&header, "header", "", true, "need header")
+	rootCmd.Flags().StringVarP(&rowChar, "row", "r", "", "row character")
+	rootCmd.Flags().StringVarP(&columnChar, "column", "c", "", "column character")
+	rootCmd.Flags().BoolVarP(&minify, "minify", "m", true, "minify output when char is empty")
+	rootCmd.Flags().BoolVarP(&header, "header", "", true, "need header")
 	rootCmd.SetHelpFunc(func(cmd *cobra.Command, args []string) {
 		if helpFlag, _ := cmd.Flags().GetBool("help"); helpFlag {
 			cmd.Usage()
