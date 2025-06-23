@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -14,9 +15,9 @@ import (
 func main() {
 	if len(os.Args) == 2 && os.Args[1] == "-h" {
 		cmd := os.Args[0]
-		println(cmd, `# print clipboard content`)
-		println(cmd, `[-p] xxx or echo xxx|`+cmd+` [-p] # copy xxx to clipboard, -p: print to stdout`)
-		println(cmd, `[-p] < file  # copy file to clipboard, -p: print to stdout`)
+		fmt.Println(cmd, `# print clipboard content`)
+		fmt.Println(cmd, `[-p] xxx or echo xxx|`+cmd+` [-p] # copy xxx to clipboard, -p: print to stdout`)
+		fmt.Println(cmd, `[-p] < file  # copy file to clipboard, -p: print to stdout`)
 		return
 	}
 	stat, err := os.Stdin.Stat()
@@ -42,12 +43,15 @@ func main() {
 	} else {
 		out, err := io.ReadAll(os.Stdin)
 		rain.ExitIf(err)
+		if len(out) == 0 {
+			rain.ExitIf(errors.New("no data to copy"))
+		}
 		data = string(out[:len(out)-1])
 	}
 
 	err = clipboard.WriteAll(data)
 	rain.ExitIf(err)
 	if bPrint {
-		println(data)
+		fmt.Println(data)
 	}
 }

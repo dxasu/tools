@@ -16,11 +16,11 @@ const (
 	// MaxCount is the maximum number of rows to copy from each table.
 	MaxCount = 100 // 设置为0表示不限制
 	// MaxConcurrent is the maximum number of concurrent database operations.
-	MaxConcurrent = 10 // 并发数限制
+	MaxConcurrent = 8 // 并发数限制
 	// MaxBatchSize is the maximum number of rows to insert in a single batch.
 	MaxBatchSize = 1000 // 每次批量插入的最大行数
 	// MaxOpenConns is the maximum number of open connections to the database.
-	MaxOpenConns = 100 // 最大打开连接数
+	MaxOpenConns = 100 // 最大打开连接数q
 )
 
 func main() {
@@ -41,7 +41,7 @@ func main() {
 	// Default target DSN if not set
 	targetDSN := os.Getenv("TARGET_DSN")
 	if targetDSN == "" {
-		targetDSN = "root:123456@tcp(127.0.0.1:3306)?charset=utf8mb4&parseTime=True&loc=Local"
+		targetDSN = "root:123456@tcp(127.0.0.1:3306)/?charset=utf8mb4&parseTime=True&loc=Local"
 	}
 	sourceDB, err := connectDB(sourceDSN)
 	rain.ExitIf(err)

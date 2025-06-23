@@ -72,7 +72,7 @@ func init() {
 	// 图片转字符
 	commandList["piczfh"] = func(p PicStruct, m image.Image) error {
 		data := ascllimage(m, p.Option.Int())
-		println(data)
+		fmt.Println(data)
 		return nil
 	}
 

@@ -19,7 +19,7 @@ const timeFormat = "2006-01-02 15:04:05"
 
 func main() {
 	if rain.NeedHelp() {
-		println(`Usage:
+		fmt.Println(`Usage:
 	datetime -[zfaAcCtTuUnh]
 Flags:
 	-z use utc+0. not location
@@ -43,8 +43,8 @@ Flags:
 	)
 
 	if len(os.Args) == 1 {
-		println(time.Now().Unix())
-		println(time.Now().Format(format))
+		fmt.Println(time.Now().Unix())
+		fmt.Println(time.Now().Format(format))
 		return
 	}
 
@@ -120,7 +120,7 @@ Flags:
 
 	// RESULT:
 	if show {
-		println(string(t.Data))
+		fmt.Println(string(t.Data))
 	}
 }
 

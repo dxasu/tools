@@ -20,7 +20,7 @@ import (
 // otpauth://totp/luck/luck@sz.com?secret=qlt6vmy6svfx4bt4rpmisaiyol6hihca&issuer=luck
 func main() {
 	if len(os.Args) < 2 || rain.NeedHelp() {
-		println(`Usage:
+		fmt.Println(`Usage:
 otp [filename] otpauth://totp/xxxxxx
 otp -[grpcn] 
 Flags:
@@ -90,7 +90,7 @@ RESTART:
 		if notPrint {
 			return
 		}
-		println(result)
+		fmt.Println(result)
 	}
 }
 

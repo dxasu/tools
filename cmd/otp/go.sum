@@ -6,8 +6,6 @@ github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dxasu/pure v1.0.0 h1:/vBHiNY+xw5IlKzixFlhcd+3IvNP6bRhmGWDWMBV0Ek=
 github.com/dxasu/pure v1.0.0/go.mod h1:WO0VE9hLPHItrnwzo2I/u6x+9P4jkY1agvfcugltfZo=
-github.com/dxasu/tools/lancet/version v0.0.0-20250516121445-9d9c0e861c8f h1:Nu732hQu6Ws35lcyF1caLFHd7VPLX0fk/IVuQoB/G9U=
-github.com/dxasu/tools/lancet/version v0.0.0-20250516121445-9d9c0e861c8f/go.mod h1:Rpf16u4Kg55e2jF+t7q8PfTtx1BXx2xaoIzRs8xPQpY=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pquerna/otp v1.4.0 h1:wZvl1TIVxKRThZIBiwOOHOGP/1+nZyWBil9Y2XNEDzg=

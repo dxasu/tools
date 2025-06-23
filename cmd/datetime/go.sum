@@ -2,8 +2,6 @@ github.com/atotto/clipboard v0.1.4 h1:EH0zSVneZPSuFR11BlR9YppQTVDbh5+16AmcJi4g1z
 github.com/atotto/clipboard v0.1.4/go.mod h1:ZY9tmq7sm5xIbd9bOK4onWV4S6X0u6GY7Vn0Yu86PYI=
 github.com/dxasu/pure v1.0.0 h1:/vBHiNY+xw5IlKzixFlhcd+3IvNP6bRhmGWDWMBV0Ek=
 github.com/dxasu/pure v1.0.0/go.mod h1:WO0VE9hLPHItrnwzo2I/u6x+9P4jkY1agvfcugltfZo=
-github.com/dxasu/tools/lancet/version v0.0.0-20250516121445-9d9c0e861c8f h1:Nu732hQu6Ws35lcyF1caLFHd7VPLX0fk/IVuQoB/G9U=
-github.com/dxasu/tools/lancet/version v0.0.0-20250516121445-9d9c0e861c8f/go.mod h1:Rpf16u4Kg55e2jF+t7q8PfTtx1BXx2xaoIzRs8xPQpY=
 github.com/frankban/quicktest v1.14.4 h1:g2rn0vABPOOXmZUj+vbmUp0lPoXEMuhTpIluN0XL9UY=
 github.com/frankban/quicktest v1.14.4/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=

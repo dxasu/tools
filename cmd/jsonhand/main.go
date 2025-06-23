@@ -20,7 +20,7 @@ import (
 
 func main() {
 	if rain.NeedHelp() {
-		println(`Usage:
+		fmt.Println(`Usage:
 	jsonhand -[juL | fFz | qsSvcn | dw] [xxx | yaml]
 Flags:
 	-j to json by yaml, yml, toml, ini, env. Data source must from clipboard
@@ -107,7 +107,7 @@ Flags:
 		case 'w':
 			const jsonURL = "https://www.json.cn/"
 			if show {
-				println(jsonURL)
+				fmt.Println(jsonURL)
 			}
 			rain.OpenBrower(jsonURL)
 			os.Exit(1)
@@ -116,7 +116,7 @@ Flags:
 		}
 	}
 	if show {
-		println(string(j.Data))
+		fmt.Println(string(j.Data))
 	}
 }
 

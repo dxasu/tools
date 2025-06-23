@@ -140,11 +140,11 @@ func evaluatePostfix(tokens []string) float64 {
 func main() {
 	if len(os.Args) == 2 && os.Args[1] == "-h" {
 		cmd := os.Args[0]
-		println(cmd, ` xxx # calculate expression, xxx from params,clipboard,stdin`)
+		fmt.Println(cmd, ` xxx # calculate expression, xxx from params,clipboard,stdin`)
 		return
 	}
 	expr := stdin.GetInput()
 	postfix := infixToPostfix(expr)
 	result := evaluatePostfix(postfix)
-	println(strconv.FormatFloat(result, 'g', 12, 64))
+	fmt.Println(strconv.FormatFloat(result, 'g', 12, 64))
 }

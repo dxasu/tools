@@ -1,6 +1,8 @@
 module github.com/dxasu/tools/cmd/record
 
-go 1.21
+go 1.23.0
+
+toolchain go1.24.1
 
 require github.com/spf13/cast v1.5.1
 
