@@ -8,8 +8,12 @@ Linux和Mac在终端运行：
 ```
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/dxasu/tools/master/scripts/install.sh)"
 ```
+
+
 如果http://raw.githubusercontent.com被屏蔽，改用git clone https://github.com/dxasu/tools && bash kd/install.sh。ArchLinux用户可以直接通过AUR安装（例如`yay -S kd`）。
 Win用powershell运行：
+
+
 ```
 Invoke-WebRequest -uri 'https://github.com/dxasu/tools/releases/latest/download/kd_windows_amd64.exe' -OutFile ( New-Item -Path "C:\bin\kd.exe" -Force )
 [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\bin", "User")
