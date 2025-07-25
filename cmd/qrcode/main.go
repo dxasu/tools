@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"io"
@@ -8,10 +9,10 @@ import (
 	"os"
 	"strings"
 
-	"bay.core/lancet/rain"
 	"github.com/atotto/clipboard"
+	"github.com/dxasu/pure/rain"
+	_ "github.com/dxasu/pure/version"
 	"github.com/dxasu/qrcode"
-	_ "github.com/dxasu/tools/lancet/version"
 	"github.com/makiuchi-d/gozxing"
 	uncode "github.com/makiuchi-d/gozxing/qrcode"
 	"github.com/spf13/cast"
@@ -19,7 +20,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 || rain.NeedHelp() {
-		println(`please input http://xxxxx
+		fmt.Println(`please input http://xxxxx
 -c or "-cs 256" with copy data from clipboard
 -u xxx.png | http://xxxx.png with unpack from qrcode`)
 		return
@@ -36,7 +37,7 @@ func main() {
 		}
 	} else if content == "-u" && len(os.Args) >= 3 {
 		file := os.Args[2]
-		println(decodeFile(file))
+		fmt.Println(decodeFile(file))
 		return
 	}
 

@@ -9,10 +9,10 @@ import (
 	"strconv"
 	"strings"
 
-	"bay.core/lancet/rain"
 	"github.com/atotto/clipboard"
+	"github.com/dxasu/pure/rain"
+	_ "github.com/dxasu/pure/version"
 	"github.com/dxasu/tools/cmd/jsonhand/j2struct"
-	_ "github.com/dxasu/tools/lancet/version"
 	"github.com/spf13/viper"
 )
 
@@ -20,11 +20,11 @@ import (
 
 func main() {
 	if rain.NeedHelp() {
-		println(`Usage:
+		fmt.Println(`Usage:
 	jsonhand -[juL | fFz | qsSvcn | dw] [xxx | yaml]
 Flags:
 	-j to json by yaml, yml, toml, ini, env. Data source must from clipboard
-	-u unquote string to json
+	-u unquote string to json (-U with force)
 	-L auto name with _sub for sub struct
 	-o ForceFloats extract from json (effective on -sSv)
 	-f format json (-F strong)
@@ -34,7 +34,7 @@ Flags:
 	-v json to struct with value
 	-c copy to clipboard
 	-n print nothing but error
-	-d as -uf default without params
+	-d as -Uf default without params
 	-w open Json WebBrowser
 `)
 		return
@@ -58,7 +58,7 @@ Flags:
 		data, err = clipboard.ReadAll()
 		rain.ExitIf(err)
 	} else {
-		data = os.Args[2]
+		data = strings.Join(os.Args[2:], " ")
 	}
 
 	if len(data) == 0 {
@@ -85,6 +85,8 @@ Flags:
 			j.Quote()
 		case 'u':
 			j.UnQuote()
+		case 'U':
+			j.UnQuoteForce()
 		case 's':
 			j.ToStruct(true)
 		case 'S':
@@ -105,7 +107,7 @@ Flags:
 		case 'w':
 			const jsonURL = "https://www.json.cn/"
 			if show {
-				println(jsonURL)
+				fmt.Println(jsonURL)
 			}
 			rain.OpenBrower(jsonURL)
 			os.Exit(1)
@@ -114,7 +116,7 @@ Flags:
 		}
 	}
 	if show {
-		println(string(j.Data))
+		fmt.Println(string(j.Data))
 	}
 }
 
@@ -131,6 +133,27 @@ func (j *jsonFly) Zip() {
 
 func (j *jsonFly) UnQuote() {
 	data, err := strconv.Unquote(string(j.Data))
+	rain.ExitIf(err)
+	j.Data = []byte(data)
+}
+
+func (j *jsonFly) UnQuoteForce() {
+	data, err := strconv.Unquote(string(j.Data))
+	if err != nil {
+		rawData := bytes.TrimSpace(j.Data)
+		var repData []byte
+		if len(rawData) > 0 && rawData[0] != '"' {
+			repData = append([]byte{'"'}, rawData...)
+		}
+		if len(rawData) > 0 && rawData[len(rawData)-1] != '"' {
+			repData = append(repData, '"')
+		}
+		_data, err2 := strconv.Unquote(string(repData))
+		if err2 == nil {
+			data = _data
+			err = nil
+		}
+	}
 	rain.ExitIf(err)
 	j.Data = []byte(data)
 }
@@ -187,6 +210,22 @@ func (j *jsonFly) ParseToJson(t string) {
 
 func (j *jsonFly) Default() {
 	data, err1 := strconv.Unquote(string(j.Data))
+	if err1 != nil {
+		rawData := bytes.TrimSpace(j.Data)
+		var repData []byte
+		if len(rawData) > 0 && rawData[0] != '"' {
+			repData = append([]byte{'"'}, rawData...)
+		}
+		if len(rawData) > 0 && rawData[len(rawData)-1] != '"' {
+			repData = append(repData, '"')
+		}
+		_data, err2 := strconv.Unquote(string(repData))
+		if err2 == nil {
+			data = _data
+			err1 = nil
+		}
+	}
+
 	if err1 == nil {
 		j.Data = []byte(data)
 	}

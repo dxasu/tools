@@ -20,7 +20,7 @@ Invoke-WebRequest -uri 'https://github.com/dxasu/tools/releases/latest/download/
 go env -w GOPROXY=https://goproxy.cn
 
 # --ldflags
---ldflags="-s -X 'github.com/dxasu/tools/lancet/version.Version=$(echo "No.$(git log --oneline |wc -l)" | sed 's/ //g')$(git log -n1 --pretty=format:%h |git tag --contains)'  -X 'github.com/dxasu/tools/lancet/version.GitCommit=$(git rev-parse --short HEAD)' -X 'github.com/dxasu/tools/lancet/version.BuildTime=$(date '+%Y-%m-%d %H:%M:%S')' -X 'github.com/dxasu/tools/lancet/version.GitStatus=$(git status)'"
+--ldflags="-s -X 'github.com/dxasu/pure/version.Version=$(echo "No.$(git log --oneline |wc -l)" | sed 's/ //g')$(git log -n1 --pretty=format:%h |git tag --contains)'  -X 'github.com/dxasu/pure/version.GitCommit=$(git rev-parse --short HEAD)' -X 'github.com/dxasu/pure/version.BuildTime=$(date '+%Y-%m-%d %H:%M:%S')' -X 'github.com/dxasu/pure/version.GitStatus=$(git status)'"
 
 
 # make

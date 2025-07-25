@@ -9,11 +9,10 @@ import (
 
 	"bytes"
 	"io/fs"
-	"io/ioutil"
 
-	"bay.core/lancet/rain"
 	"github.com/atotto/clipboard"
-	_ "github.com/dxasu/tools/lancet/version"
+	"github.com/dxasu/pure/rain"
+	_ "github.com/dxasu/pure/version"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
 )
@@ -21,7 +20,7 @@ import (
 // otpauth://totp/luck/luck@sz.com?secret=qlt6vmy6svfx4bt4rpmisaiyol6hihca&issuer=luck
 func main() {
 	if len(os.Args) < 2 || rain.NeedHelp() {
-		println(`Usage:
+		fmt.Println(`Usage:
 otp [filename] otpauth://totp/xxxxxx
 otp -[grpcn] 
 Flags:
@@ -91,7 +90,7 @@ RESTART:
 		if notPrint {
 			return
 		}
-		println(result)
+		fmt.Println(result)
 	}
 }
 
@@ -100,7 +99,7 @@ func display(key *otp.Key, data []byte) {
 	fmt.Printf("Account Name: %s\n", key.AccountName())
 	fmt.Printf("Secret:       %s\n", key.Secret())
 	fmt.Println("Writing PNG to otp.png....")
-	ioutil.WriteFile("otp.png", data, 0644)
+	os.WriteFile("otp.png", data, 0644)
 }
 
 // func promptForPasscode() string {
