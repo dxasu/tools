@@ -14,6 +14,7 @@ import (
 	_ "github.com/dxasu/pure/version"
 	"github.com/dxasu/tools/cmd/jsonhand/j2struct"
 	"github.com/spf13/viper"
+	"github.com/tidwall/gjson"
 )
 
 // var r = strings.NewReplacer("\r", "", "\n", "")
@@ -21,13 +22,14 @@ import (
 func main() {
 	if rain.NeedHelp() {
 		fmt.Println(`Usage:
-	jsonhand -[juL | fFz | qsSvcn | dw] [xxx | yaml]
+	` + os.Args[0] + ` -[juL | fFz | qsSvcn | dw] [xxx | yaml]
 Flags:
 	-j to json by yaml, yml, toml, ini, env. Data source must from clipboard
 	-u unquote string to json (-U with force)
 	-L auto name with _sub for sub struct
 	-o ForceFloats extract from json (effective on -sSv)
 	-f format json (-F strong)
+	-g get sub json by path
 	-z zip json
 	-q quote json to string
 	-s spawn go struct and sub (-S with single struct)
@@ -54,7 +56,12 @@ Flags:
 		data string
 		err  error
 	)
-	if len(os.Args) < 3 || strings.ContainsRune(cmd, 'j') {
+	if len(os.Args) < 3 || strings.ContainsRune(cmd, 'j') || strings.ContainsRune(cmd, 'g') {
+		if strings.ContainsRune(cmd, 'g') {
+			if len(os.Args) != 3 {
+				rain.ExitIf(errors.New(os.Args[0] + " -g path"))
+			}
+		}
 		data, err = clipboard.ReadAll()
 		rain.ExitIf(err)
 	} else {
@@ -87,6 +94,8 @@ Flags:
 			j.UnQuote()
 		case 'U':
 			j.UnQuoteForce()
+		case 'g':
+			j.GetSub(os.Args[2])
 		case 's':
 			j.ToStruct(true)
 		case 'S':
@@ -179,6 +188,10 @@ func (j *jsonFly) FormatStrong() {
 	j.Data, err = json.Marshal(viper.AllSettings())
 	rain.ExitIf(err)
 	j.Format()
+}
+
+func (j *jsonFly) GetSub(path string) {
+	j.Data = []byte(gjson.GetBytes(j.Data, path).String())
 }
 
 func (j *jsonFly) ToStruct(subStruct bool) {
