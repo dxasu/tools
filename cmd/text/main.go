@@ -18,10 +18,11 @@ import (
 )
 
 var (
-	rowChar    = "" // -
-	columnChar = "" // '|'
-	minify     = true
-	header     = true
+	rowChar     = "" // -
+	columnChar  = "" // '|'
+	minify      = true
+	header      = true
+	braceFormat = ""
 )
 
 // 根命令
@@ -48,6 +49,34 @@ var rootCmd = &cobra.Command{
 			}
 		}
 
+		if braceFormat != "" {
+			r := strings.NewReplacer("\\n", "\n", "\\t", "\t")
+			// "f,f"f(f,f)
+			braceFormat = r.Replace(braceFormat)
+			holds := strings.Split(braceFormat, "f")
+			if len(holds) < 6 {
+				panic(`braceFormat must like: "f,f"f(f,f)`)
+			}
+			arr := ToArray(data)
+			output := strings.Builder{}
+			for i, row := range arr {
+				if i != 0 {
+					output.WriteString(holds[4])
+				}
+				output.WriteString(holds[3])
+				for j, v := range row {
+					if j != 0 {
+						output.WriteString(holds[1])
+					}
+					output.WriteString(holds[0])
+					output.WriteString(v)
+					output.WriteString(holds[2])
+				}
+				output.WriteString(holds[5])
+			}
+			clipboard.WriteAll(output.String())
+			return
+		}
 		output := bytes.NewBuffer(nil)
 		t := text.NewText(output, header, data)
 		t.SetSymbols(&text.SymbolCustom{
@@ -85,9 +114,29 @@ func init() {
 	rootCmd.Flags().StringVarP(&columnChar, "column", "c", "", "column character")
 	rootCmd.Flags().BoolVarP(&minify, "minify", "m", true, "minify output when char is empty")
 	rootCmd.Flags().BoolVarP(&header, "header", "", true, "need header")
+	rootCmd.Flags().StringVarP(&braceFormat, "brace format", "f", "", "brace")
 	rootCmd.SetHelpFunc(func(cmd *cobra.Command, args []string) {
 		if helpFlag, _ := cmd.Flags().GetBool("help"); helpFlag {
 			cmd.Usage()
 		}
 	})
+}
+
+func ToArray(data any) [][]string {
+	var rows [][]string
+	switch data := data.(type) {
+	case string:
+		d := strings.Split(data, "\n")
+		for _, line := range d {
+			rows = append(rows, strings.Split(line, "\t"))
+		}
+	case []string:
+		for _, line := range data {
+			rows = append(rows, strings.Split(line, "\t"))
+		}
+	case [][]string:
+		rows = data
+	default:
+	}
+	return rows
 }
