@@ -93,7 +93,7 @@ func parseTokens(expr string) []string {
 
 // 判断是否为运算符或括号
 func isOperatorOrBracket(ch rune) bool {
-	return ch == '+' || ch == '-' || ch == '*' || ch == '/' ||
+	return ch == '+' || ch == '-' || ch == '*' || ch == 'x' || ch == 'X' || ch == '/' ||
 		ch == '^' || ch == '(' || ch == ')'
 }
 
@@ -123,7 +123,7 @@ func evaluatePostfix(tokens []string) float64 {
 				result = left + right
 			case "-":
 				result = left - right
-			case "*":
+			case "*", "x", "X":
 				result = left * right
 			case "/":
 				result = left / right
