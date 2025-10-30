@@ -45,12 +45,18 @@ func main() {
 	}
 	sourceDB, err := connectDB(sourceDSN)
 	rain.ExitIf(err)
-	targetDB, err := connectDB(targetDSN)
-	rain.ExitIf(err)
 	defer sourceDB.Close()
-	defer targetDB.Close()
 	sourceDB.SetMaxOpenConns(MaxOpenConns)
-	targetDB.SetMaxOpenConns(MaxOpenConns)
+
+	var targetDBExecutor DBExecutor = &DB{}
+	if targetDSN != "file" {
+		targetDB, err := connectDB(targetDSN)
+		rain.ExitIf(err)
+		defer targetDB.Close()
+		targetDB.SetMaxOpenConns(MaxOpenConns)
+		targetDBExecutor = targetDB
+	}
+
 	databases, err := getNonSystemDatabases(sourceDB)
 	rain.ExitIf(err)
 	var defaulCount int = MaxCount
@@ -62,7 +68,7 @@ func main() {
 			defer wg.Done()
 			sem <- struct{}{}
 			defer func() { <-sem }()
-			err = createDatabaseIfNotExists(targetDB, dbName)
+			err = createDatabaseIfNotExists(targetDBExecutor, dbName)
 			if err != nil {
 				log.Printf("Failed to create database %s: %v", dbName, err)
 				return
@@ -73,7 +79,7 @@ func main() {
 				return
 			}
 			for _, tableName := range tables {
-				err = copyTable(sourceDB, targetDB, dbName, dbName, tableName, defaulCount)
+				err = copyTable(sourceDB, targetDBExecutor, dbName, dbName, tableName, defaulCount)
 				if err != nil {
 					log.Printf("Failed to copy table %s.%s: %v", dbName, tableName, err)
 				}
@@ -118,7 +124,7 @@ func getNonSystemDatabases(db *sql.DB) ([]string, error) {
 	return databases, nil
 }
 
-func createDatabaseIfNotExists(db *sql.DB, dbName string) error {
+func createDatabaseIfNotExists(db DBExecutor, dbName string) error {
 	_, err := db.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s`", dbName))
 	return err
 }
@@ -142,7 +148,7 @@ func getTablesInDatabase(db *sql.DB, dbName string) ([]string, error) {
 	return tables, nil
 }
 
-func copyTable(sourceDB, targetDB *sql.DB, sourceDBName, targetDBName, tableName string, maxCount int) error {
+func copyTable(sourceDB *sql.DB, targetDB DBExecutor, sourceDBName, targetDBName, tableName string, maxCount int) error {
 	// 1. 复制表结构
 	var createTableSQL string
 	err := sourceDB.QueryRow(fmt.Sprintf("SHOW CREATE TABLE `%s`.`%s`", sourceDBName, tableName)).Scan(&tableName, &createTableSQL)
@@ -192,12 +198,6 @@ func copyTable(sourceDB, targetDB *sql.DB, sourceDBName, targetDBName, tableName
 		insertSQL := fmt.Sprintf("INSERT INTO `%s`.`%s` (%s) VALUES (%s)",
 			targetDBName, tableName, strings.Join(columns, ","), placeholders)
 
-		stmt, err := targetDB.Prepare(insertSQL)
-		if err != nil {
-			return err
-		}
-		defer stmt.Close()
-
 		// 处理当前批次数据
 		batchCount := 0
 		for {
@@ -211,7 +211,7 @@ func copyTable(sourceDB, targetDB *sql.DB, sourceDBName, targetDBName, tableName
 				return err
 			}
 
-			_, err = stmt.Exec(values...)
+			_, err = targetDB.Exec(insertSQL, values...)
 			if err != nil {
 				return err
 			}
@@ -224,4 +224,16 @@ func copyTable(sourceDB, targetDB *sql.DB, sourceDBName, targetDBName, tableName
 		offset += batchCount
 	}
 	return nil
+}
+
+type DBExecutor interface {
+	Exec(query string, args ...any) (sql.Result, error)
+}
+
+type DB struct {
+}
+
+func (db *DB) Exec(query string, args ...any) (sql.Result, error) {
+	fmt.Println(query, args)
+	return nil, nil
 }
